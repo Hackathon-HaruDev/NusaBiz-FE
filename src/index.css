@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Karma:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+@plugin "daisyui";
+
+:root{
+    --primary: #EFF3F5;
+    --secondary: #F43F5E;
+    color: black;
+    --font-karma: "Karma", serif;
+}
+
+/* Apply the custom font globally */
+body {
+    font-family: var(--font-karma), serif;
+}
+
