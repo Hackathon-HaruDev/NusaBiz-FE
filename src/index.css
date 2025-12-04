@@ -3,14 +3,20 @@
 @plugin "daisyui";
 
 :root{
-    --primary: #EFF3F5;
+    --primary: #192335;
     --secondary: #F43F5E;
     color: black;
     --font-karma: "Karma", serif;
+    background: #fff;
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
-
+ /* font-family: var(--font-karma), serif; */
 /* Apply the custom font globally */
-body {
-    font-family: var(--font-karma), serif;
-}
+/* ::-webkit-scrollbar {
+   
+    display: none;
+} */
 
+body::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
+}

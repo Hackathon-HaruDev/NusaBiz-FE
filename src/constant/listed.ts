@@ -1,7 +1,9 @@
 export const listed = {
-    signIn: '/signIn',
-    landingPage: '/landingPage',
-    dashboard: '/',
-    transaksi: '/transaksi',
-    produk: '/produk'
+    signIn: '/SignIn',
+    landingPage: '/LandingPage',
+    dashboard: 'Dashboard',
+    transaksi: '/Transaksi',
+    produk: '/Produk',
+    profile: '/Profil'
+
 };
