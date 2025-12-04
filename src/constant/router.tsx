@@ -30,4 +30,12 @@ export const Router = createBrowserRouter([
         }
     ],
     },
+    {
+        path: listed.landingPage,
+        element: <div>landing Page</div>
+    },
+    {
+        path: listed.signIn,
+        element: <div>Sign In</div>
+    }
 ])
