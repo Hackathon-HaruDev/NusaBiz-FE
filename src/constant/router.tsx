@@ -4,6 +4,9 @@ import { listed } from './listed';
 import Dashboard from '../pages/dashboard';
 import LandingPage from '../pages/landing';
 import Produk from '../pages/produk';
+import Auth from '../pages/auth';
+import PasswordObscure from '../components/auth/obscure';
+import AuthToggle from '../components/auth/toggle';
 
 export const Router = createBrowserRouter([
     {
@@ -41,7 +44,7 @@ export const Router = createBrowserRouter([
         element: <LandingPage />
     },
     {
-        path: listed.signIn,
-        element: <div>Sign In</div>
+        path: listed.auth,
+        element: <Auth />
     }
 ])
