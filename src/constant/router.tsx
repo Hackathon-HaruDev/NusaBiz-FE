@@ -2,6 +2,8 @@ import { createBrowserRouter } from 'react-router-dom';
 import Layout from '../components/layout';
 import { listed } from './listed';
 import Dashboard from '../pages/dashboard';
+import LandingPage from '../pages/landing';
+import Produk from '../pages/produk';
 
 export const Router = createBrowserRouter([
     {
@@ -13,6 +15,10 @@ export const Router = createBrowserRouter([
     ),
     children: [
         {
+            index: true,
+            element: <Dashboard />,
+        },
+        {
             path: listed.dashboard,
             element: <Dashboard />
         },
@@ -22,7 +28,7 @@ export const Router = createBrowserRouter([
         },
         {
             path: listed.produk,
-            element: <div>Test</div>
+            element: <Produk />
         },
         {
             path: listed.profile,
@@ -32,7 +38,7 @@ export const Router = createBrowserRouter([
     },
     {
         path: listed.landingPage,
-        element: <div>landing Page</div>
+        element: <LandingPage />
     },
     {
         path: listed.signIn,
