@@ -2,6 +2,9 @@ import { createBrowserRouter } from 'react-router-dom';
 import Layout from '../components/layout';
 import { listed } from './listed';
 import Dashboard from '../pages/dashboard';
+import Auth from '../pages/auth';
+import PasswordObscure from '../components/auth/obscure';
+import AuthToggle from '../components/auth/toggle';
 
 export const Router = createBrowserRouter([
     {
@@ -35,7 +38,7 @@ export const Router = createBrowserRouter([
         element: <div>landing Page</div>
     },
     {
-        path: listed.signIn,
-        element: <div>Sign In</div>
+        path: listed.auth,
+        element: <Auth />
     }
 ])
