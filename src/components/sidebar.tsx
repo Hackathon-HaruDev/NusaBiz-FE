@@ -9,14 +9,13 @@ interface props {
 
 const SideBar: React.FC<props> = ({ isOpen }) => {
     const navigate = useNavigate();
-    const location = useLocation(); // <-- PENTING
+    const location = useLocation();
     const activeStyle = "bg-[#3D4C66] rounded-lg font-bold";
 
     const [isActive, setIsActive] = useState("Dashboard");
 
     useEffect(() => {
         const current = location.pathname.split("/")[1]; 
-        // contoh "/Presensi" -> "Presensi"
 
         if (current.toLowerCase() === "profil") {
         setIsActive("Profil");
@@ -30,7 +29,7 @@ const SideBar: React.FC<props> = ({ isOpen }) => {
         if (found) {
             setIsActive(found.nama);
         } else {
-            setIsActive("Dashboard"); // default saat "/"
+            setIsActive("Dashboard"); 
         }
 
     }, [location.pathname]); 
@@ -38,8 +37,6 @@ const SideBar: React.FC<props> = ({ isOpen }) => {
     return (
         <div className={`bg-(--primary) flex flex-col h-[calc(100vh-64px)] font-(--font-karma) text-2xl w-52 p-5 fixed transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
             <div className="flex flex-col h-full justify-between">
-
-                {/* Menu Items */}
                 <div className="flex flex-col gap-5 text-lg">
                     {sidebarItem.map((data, index) => (
                         <div
@@ -55,8 +52,6 @@ const SideBar: React.FC<props> = ({ isOpen }) => {
                         </div>
                     ))}
                 </div>
-
-                {/* Bottom Section */}
                 <div className="flex flex-col gap-3 text-lg">
                     <div
                         className={`flex flex-row gap-3 items-center p-2 cursor-pointer ${isActive === "Profil" && activeStyle}`}
