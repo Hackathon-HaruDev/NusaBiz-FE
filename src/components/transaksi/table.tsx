@@ -1,65 +1,46 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Funnel, Search, Download, Plus, Trash2, Pencil } from "lucide-react";
 import AddTransactionModal from "./addtransactionmodal";
 import FilterModal from "./filtermodal";
-
-interface TransactionData {
-  id: number;
-  tanggal: string;
-  tipeTransaksi: "Pemasukan" | "Pengeluaran";
-  kategori: string;
-  status: "Sukses";
-  jumlah: string;
-  deskripsi: string;
-}
+import { useTransactions } from "../../hooks/useTransactions";
+import {
+  formatDate,
+  getTransactionTypeLabel,
+  getStatusLabel,
+  formatTransactionAmount,
+  getTransactionTypeBadgeColor,
+  getStatusBadgeColor,
+  filterTransactionsByQuery,
+} from "../../utils/transaction.utils";
+import type { TransactionType } from "../../types/transaction.types";
 
 const Table: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
-  const [tipeFilter, setTipeFilter] = useState("Tipe Transaksi");
+  const [tipeFilter, setTipeFilter] = useState<string>("Tipe Transaksi");
   const [isAddTransactionModalOpen, setIsAddTransactionModalOpen] =
     useState(false);
-    const [isFilterModalOpen, setIsFilterModalOpen] = useState(false); 
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
-  // Sample data
-  const transactions: TransactionData[] = [
-    {
-      id: 1,
-      tanggal: "12 Oktober 2025",
-      tipeTransaksi: "Pemasukan",
-      kategori: "Penjualan Produk",
-      status: "Sukses",
-      jumlah: "+ Rp 10.000",
-      deskripsi: "-",
-    },
-    {
-      id: 2,
-      tanggal: "10 Oktober 2025",
-      tipeTransaksi: "Pemasukan",
-      kategori: "Penjualan Produk",
-      status: "Sukses",
-      jumlah: "+ Rp 90.000",
-      deskripsi: "Alhamdulillah",
-    },
-    {
-      id: 3,
-      tanggal: "5 Oktober 2025",
-      tipeTransaksi: "Pengeluaran",
-      kategori: "Biaya Operasional",
-      status: "Sukses",
-      jumlah: "- Rp 100.000",
-      deskripsi: "Gas 1 Ton",
-    },
-    {
-      id: 4,
-      tanggal: "5 Oktober 2025",
-      tipeTransaksi: "Pengeluaran",
-      kategori: "Lainnya",
-      status: "Sukses",
-      jumlah: "- Rp 100.000.000",
-      deskripsi: "Motor 5",
-    },
-  ];
+  // Fetch transactions from backend
+  const { transactions: rawTransactions, loading } = useTransactions();
+
+  // Filter transactions based on search and type filter
+  const transactions = useMemo(() => {
+    let filtered = rawTransactions;
+
+    // Apply type filter
+    if (tipeFilter !== "Tipe Transaksi") {
+      const typeValue: TransactionType =
+        tipeFilter === "Pemasukan" ? "Income" : "Expense";
+      filtered = filtered.filter((t) => t.type === typeValue);
+    }
+
+    // Apply search filter
+    filtered = filterTransactionsByQuery(filtered, searchQuery);
+
+    return filtered;
+  }, [rawTransactions, tipeFilter, searchQuery]);
 
   const toggleRowSelection = (id: number) => {
     setSelectedRows((prev) =>
@@ -103,7 +84,10 @@ const Table: React.FC = () => {
         </select>
 
         {/* Filter Icon Button */}
-        <button className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors" onClick={() => setIsFilterModalOpen(true)}>
+        <button
+          className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          onClick={() => setIsFilterModalOpen(true)}
+        >
           <Funnel className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
         </button>
 
@@ -192,61 +176,106 @@ const Table: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {transactions.map((transaction) => (
-              <tr
-                key={transaction.id}
-                className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
-              >
-                <td className="py-3 px-4">
-                  <input
-                    type="checkbox"
-                    className="w-4 h-4 rounded border-gray-300 cursor-pointer"
-                    checked={selectedRows.includes(transaction.id)}
-                    onChange={() => toggleRowSelection(transaction.id)}
-                  />
-                </td>
-                <td className="py-3 px-4 text-sm text-gray-900">
-                  {transaction.tanggal}
-                </td>
-                <td className="py-3 px-4">
-                  <span
-                    className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${
-                      transaction.tipeTransaksi === "Pemasukan"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {transaction.tipeTransaksi}
-                  </span>
-                </td>
-                <td className="py-3 px-4 text-sm text-gray-900">
-                  {transaction.kategori}
-                </td>
-                <td className="py-3 px-4">
-                  <span className="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                    {transaction.status}
-                  </span>
-                </td>
-                <td
-                  className={`py-3 px-4 text-sm font-medium ${
-                    transaction.tipeTransaksi === "Pemasukan"
-                      ? "text-green-600"
-                      : "text-red-600"
-                  }`}
-                >
-                  {transaction.jumlah}
-                </td>
-                <td className="py-3 px-4 text-sm text-gray-900">
-                  {transaction.deskripsi}
+            {loading ? (
+              // Loading skeleton
+              Array.from({ length: 3 }).map((_, idx) => (
+                <tr key={idx} className="border-b border-gray-100">
+                  <td className="py-3 px-4">
+                    <div className="w-4 h-4 bg-gray-200 animate-pulse rounded"></div>
+                  </td>
+                  <td className="py-3 px-4">
+                    <div className="h-4 bg-gray-200 animate-pulse rounded"></div>
+                  </td>
+                  <td className="py-3 px-4">
+                    <div className="h-6 w-24 bg-gray-200 animate-pulse rounded-full"></div>
+                  </td>
+                  <td className="py-3 px-4">
+                    <div className="h-4 bg-gray-200 animate-pulse rounded"></div>
+                  </td>
+                  <td className="py-3 px-4">
+                    <div className="h-6 w-20 bg-gray-200 animate-pulse rounded-full"></div>
+                  </td>
+                  <td className="py-3 px-4">
+                    <div className="h-4 bg-gray-200 animate-pulse rounded"></div>
+                  </td>
+                  <td className="py-3 px-4">
+                    <div className="h-4 bg-gray-200 animate-pulse rounded"></div>
+                  </td>
+                </tr>
+              ))
+            ) : transactions.length === 0 ? (
+              // Empty state
+              <tr>
+                <td colSpan={7} className="py-8 text-center text-gray-500">
+                  Tidak ada transaksi
                 </td>
               </tr>
-            ))}
+            ) : (
+              // Transaction rows
+              transactions.map((transaction) => (
+                <tr
+                  key={transaction.id}
+                  className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                >
+                  <td className="py-3 px-4">
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 rounded border-gray-300 cursor-pointer"
+                      checked={selectedRows.includes(transaction.id)}
+                      onChange={() => toggleRowSelection(transaction.id)}
+                    />
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-900">
+                    {formatDate(transaction.transaction_date)}
+                  </td>
+                  <td className="py-3 px-4">
+                    <span
+                      className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${getTransactionTypeBadgeColor(
+                        transaction.type
+                      )}`}
+                    >
+                      {getTransactionTypeLabel(transaction.type)}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-900">
+                    {transaction.category || "-"}
+                  </td>
+                  <td className="py-3 px-4">
+                    <span
+                      className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(
+                        transaction.status
+                      )}`}
+                    >
+                      {getStatusLabel(transaction.status)}
+                    </span>
+                  </td>
+                  <td
+                    className={`py-3 px-4 text-sm font-medium ${
+                      transaction.type === "Income"
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
+                    {formatTransactionAmount(
+                      transaction.amount,
+                      transaction.type
+                    )}
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-900">
+                    {transaction.description || "-"}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
-      <FilterModal isOpen={isFilterModalOpen} onClose={() => {
-              setIsFilterModalOpen(false);
-          } }/>
+      <FilterModal
+        isOpen={isFilterModalOpen}
+        onClose={() => {
+          setIsFilterModalOpen(false);
+        }}
+      />
       <AddTransactionModal
         isOpen={isAddTransactionModalOpen}
         onClose={() => {
