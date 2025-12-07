@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 const AuthProtectLayout = ({ children }: { children: React.ReactNode }) => {
@@ -40,7 +40,7 @@ const AuthProtectLayout = ({ children }: { children: React.ReactNode }) => {
 
   // ❌ Invalid or expired token
   if (isValid === false) {
-    return <Navigate to="/Authentication" replace />;
+    return <Navigate to="/Auth" replace />;
   }
 
   // ✔ Token valid
