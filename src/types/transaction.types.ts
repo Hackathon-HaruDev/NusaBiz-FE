@@ -48,6 +48,9 @@ export interface CreateTransactionDTO {
 export interface UpdateTransactionDTO {
   description?: string;
   status?: TransactionStatus;
+  date?: string;
+  amount?: number;
+  category?: string;
 }
 
 export interface RecordSaleDTO {

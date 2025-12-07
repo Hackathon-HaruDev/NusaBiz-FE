@@ -5,6 +5,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import * as transactionService from "../services/api/transaction.service";
+import * as businessService from "../services/api/business.service";
 import type {
   Transaction,
   TransactionTotals,
@@ -73,12 +74,29 @@ export const useTransactions = (
     []
   );
 
-  // Fetch transaction totals
+  // Fetch transaction totals (Switched to use getBalanceSummary for current_balance)
   const fetchTotals = useCallback(
     async (dateRange?: { startDate: string; endDate: string }) => {
       try {
-        const data = await transactionService.getTransactionTotals(dateRange);
-        setTotals(data);
+        const businessIdStr = localStorage.getItem("business_id");
+        if (!businessIdStr) return;
+
+        const businessId = parseInt(businessIdStr, 10);
+
+        // Uses business service to get real current balance
+        const data = await businessService.getBalanceSummary(
+          businessId,
+          dateRange
+        );
+
+        // Map BalanceSummary to TransactionTotals structure
+        // 'net' property is used for UI "Saldo" card, so we map 'currentBalance' to it.
+        setTotals({
+          income: data.totalIncome,
+          expense: data.totalExpense,
+          net: data.currentBalance, // Mapping currentBalance to net for display purposes
+          dateRange: data.dateRange,
+        });
       } catch (err: any) {
         console.error("Error fetching totals:", err);
         // Don't set error for totals to avoid blocking the UI
@@ -152,6 +170,8 @@ export const useTransactions = (
 
   // Refresh all data
   const refreshData = useCallback(async () => {
+    // Need to pass initialFilters or current filters if stored state
+    // For now using initialFilters passed to hook
     await Promise.all([fetchTransactions(initialFilters), fetchTotals()]);
   }, [fetchTransactions, fetchTotals, initialFilters]);
 

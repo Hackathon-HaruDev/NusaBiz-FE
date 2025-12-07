@@ -16,7 +16,21 @@ import type {
   TransactionFilters,
 } from "../../types/transaction.types";
 
-const BUSINESS_ID = 1; // Default business ID, should be obtained from auth context
+/**
+ * Get business ID from localStorage
+ * This should be set after user registers their business
+ */
+const getBusinessId = (): number => {
+  const businessId = localStorage.getItem("business_id");
+  if (!businessId) {
+    throw new Error(
+      "Business ID not found. Please complete business setup first."
+    );
+  }
+  return parseInt(businessId, 10);
+};
+
+const BUSINESS_ID = () => getBusinessId(); // Dynamic getter
 
 /**
  * Get all transactions with optional filters
@@ -35,7 +49,7 @@ export const getTransactions = async (
   if (filters?.offset) params.append("offset", filters.offset.toString());
 
   const queryString = params.toString();
-  const url = `/businesses/${BUSINESS_ID}/transactions${
+  const url = `/businesses/${BUSINESS_ID()}/transactions${
     queryString ? `?${queryString}` : ""
   }`;
 
@@ -50,7 +64,7 @@ export const getTransactionById = async (
   transactionId: number
 ): Promise<TransactionWithDetails> => {
   const response = await api.get<{ data: TransactionWithDetails }>(
-    `/businesses/${BUSINESS_ID}/transactions/${transactionId}`
+    `/businesses/${BUSINESS_ID()}/transactions/${transactionId}`
   );
   return response.data.data;
 };
@@ -62,7 +76,7 @@ export const createTransaction = async (
   data: CreateTransactionDTO
 ): Promise<Transaction> => {
   const response = await api.post<{ data: Transaction }>(
-    `/businesses/${BUSINESS_ID}/transactions`,
+    `/businesses/${BUSINESS_ID()}/transactions`,
     data
   );
   return response.data.data;
@@ -76,7 +90,7 @@ export const updateTransaction = async (
   data: UpdateTransactionDTO
 ): Promise<Transaction> => {
   const response = await api.put<{ data: Transaction }>(
-    `/businesses/${BUSINESS_ID}/transactions/${transactionId}`,
+    `/businesses/${BUSINESS_ID()}/transactions/${transactionId}`,
     data
   );
   return response.data.data;
@@ -89,7 +103,7 @@ export const cancelTransaction = async (
   transactionId: number
 ): Promise<Transaction> => {
   const response = await api.put<{ data: Transaction }>(
-    `/businesses/${BUSINESS_ID}/transactions/${transactionId}/cancel`
+    `/businesses/${BUSINESS_ID()}/transactions/${transactionId}/cancel`
   );
   return response.data.data;
 };
@@ -100,7 +114,9 @@ export const cancelTransaction = async (
 export const deleteTransaction = async (
   transactionId: number
 ): Promise<void> => {
-  await api.delete(`/businesses/${BUSINESS_ID}/transactions/${transactionId}`);
+  await api.delete(
+    `/businesses/${BUSINESS_ID()}/transactions/${transactionId}`
+  );
 };
 
 /**
@@ -110,7 +126,7 @@ export const recordSale = async (
   data: RecordSaleDTO
 ): Promise<TransactionWithDetails> => {
   const response = await api.post<{ data: TransactionWithDetails }>(
-    `/businesses/${BUSINESS_ID}/transactions/sales`,
+    `/businesses/${BUSINESS_ID()}/transactions/sales`,
     data
   );
   return response.data.data;
@@ -123,7 +139,7 @@ export const recordPurchase = async (
   data: RecordPurchaseDTO
 ): Promise<TransactionWithDetails> => {
   const response = await api.post<{ data: TransactionWithDetails }>(
-    `/businesses/${BUSINESS_ID}/transactions/purchases`,
+    `/businesses/${BUSINESS_ID()}/transactions/purchases`,
     data
   );
   return response.data.data;
@@ -142,7 +158,7 @@ export const getTransactionTotals = async (dateRange?: {
   if (dateRange?.endDate) params.append("endDate", dateRange.endDate);
 
   const queryString = params.toString();
-  const url = `/businesses/${BUSINESS_ID}/transactions/totals${
+  const url = `/businesses/${BUSINESS_ID()}/transactions/totals${
     queryString ? `?${queryString}` : ""
   }`;
 

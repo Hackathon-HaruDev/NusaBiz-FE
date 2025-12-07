@@ -1,8 +1,10 @@
 import { useState, useMemo } from "react";
 import { Funnel, Search, Download, Plus, Trash2, Pencil } from "lucide-react";
 import AddTransactionModal from "./addtransactionmodal";
-import FilterModal from "./filtermodal";
-import { useTransactions } from "../../hooks/useTransactions";
+import FilterModal, { type FilterValues } from "./filtermodal";
+import EditTransactionModal from "./edittransactionmodal";
+import ConfirmationModal from "../common/ConfirmationModal";
+import * as transactionService from "../../services/api/transaction.service";
 import {
   formatDate,
   getTransactionTypeLabel,
@@ -12,35 +14,84 @@ import {
   getStatusBadgeColor,
   filterTransactionsByQuery,
 } from "../../utils/transaction.utils";
-import type { TransactionType } from "../../types/transaction.types";
+import type {
+  TransactionType,
+  Transaction,
+} from "../../types/transaction.types";
 
-const Table: React.FC = () => {
+interface TableProps {
+  transactions: Transaction[];
+  loading: boolean;
+  onRefresh: () => void;
+}
+
+const Table: React.FC<TableProps> = ({
+  transactions: rawTransactions,
+  loading,
+  onRefresh,
+}) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [tipeFilter, setTipeFilter] = useState<string>("Tipe Transaksi");
   const [isAddTransactionModalOpen, setIsAddTransactionModalOpen] =
     useState(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [transactionToEdit, setTransactionToEdit] =
+    useState<Transaction | null>(null);
+  const [activeFilters, setActiveFilters] = useState<FilterValues | null>(null);
 
-  // Fetch transactions from backend
-  const { transactions: rawTransactions, loading } = useTransactions();
-
-  // Filter transactions based on search and type filter
   const transactions = useMemo(() => {
     let filtered = rawTransactions;
 
-    // Apply type filter
     if (tipeFilter !== "Tipe Transaksi") {
       const typeValue: TransactionType =
         tipeFilter === "Pemasukan" ? "Income" : "Expense";
       filtered = filtered.filter((t) => t.type === typeValue);
     }
 
-    // Apply search filter
+    if (activeFilters) {
+      if (activeFilters.startDate) {
+        filtered = filtered.filter(
+          (t) => t.transaction_date >= activeFilters.startDate
+        );
+      }
+      if (activeFilters.endDate) {
+        filtered = filtered.filter(
+          (t) => t.transaction_date.split("T")[0] <= activeFilters.endDate
+        );
+      }
+
+      if (activeFilters.tipeTransaksi) {
+        const typeValue: TransactionType =
+          activeFilters.tipeTransaksi === "pemasukan" ? "Income" : "Expense";
+        filtered = filtered.filter((t) => t.type === typeValue);
+      }
+
+      if (activeFilters.kategori) {
+        filtered = filtered.filter((t) =>
+          t.category
+            ?.toLowerCase()
+            .includes(activeFilters.kategori.toLowerCase())
+        );
+      }
+
+      if (activeFilters.minAmount) {
+        const min = parseInt(activeFilters.minAmount.replace(/\./g, ""));
+        filtered = filtered.filter((t) => t.amount >= min);
+      }
+      if (activeFilters.maxAmount) {
+        const max = parseInt(activeFilters.maxAmount.replace(/\./g, ""));
+        filtered = filtered.filter((t) => t.amount <= max);
+      }
+    }
+
     filtered = filterTransactionsByQuery(filtered, searchQuery);
 
     return filtered;
-  }, [rawTransactions, tipeFilter, searchQuery]);
+  }, [rawTransactions, tipeFilter, searchQuery, activeFilters]);
 
   const toggleRowSelection = (id: number) => {
     setSelectedRows((prev) =>
@@ -56,11 +107,29 @@ const Table: React.FC = () => {
     }
   };
 
+  const handleDelete = async () => {
+    if (selectedRows.length === 0) return;
+
+    try {
+      setIsDeleting(true);
+
+      await Promise.all(
+        selectedRows.map((id) => transactionService.deleteTransaction(id))
+      );
+
+      setSelectedRows([]);
+      setIsDeleteModalOpen(false);
+
+      onRefresh();
+    } catch (error) {
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-3 sm:p-6">
-      {/* Search and Actions Bar */}
       <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
-        {/* Search Input */}
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
           <input
@@ -72,7 +141,6 @@ const Table: React.FC = () => {
           />
         </div>
 
-        {/* Filter Dropdown */}
         <select
           className="px-3 sm:px-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white min-w-[120px] sm:min-w-[180px]"
           value={tipeFilter}
@@ -83,7 +151,6 @@ const Table: React.FC = () => {
           <option>Pengeluaran</option>
         </select>
 
-        {/* Filter Icon Button */}
         <button
           className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
           onClick={() => setIsFilterModalOpen(true)}
@@ -91,12 +158,10 @@ const Table: React.FC = () => {
           <Funnel className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
         </button>
 
-        {/* Download Button */}
         <button className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
           <Download className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
         </button>
 
-        {/* Add Transaction Button */}
         <button
           className="px-3 sm:px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
           onClick={() => {
@@ -109,25 +174,31 @@ const Table: React.FC = () => {
           </span>
         </button>
 
-        {/* Edit Button */}
         <button
-          disabled={selectedRows.length === 0}
+          disabled={selectedRows.length !== 1}
+          onClick={() => {
+            const tx = transactions.find((t) => t.id === selectedRows[0]);
+            if (tx) {
+              setTransactionToEdit(tx);
+              setIsEditModalOpen(true);
+            }
+          }}
           className={`p-2 border rounded-lg transition-colors ${
-            selectedRows.length === 0
+            selectedRows.length !== 1
               ? "border-gray-200 bg-gray-100 cursor-not-allowed opacity-50"
               : "border-gray-200 hover:bg-blue-50 hover:border-blue-300"
           }`}
         >
           <Pencil
             className={`w-4 h-4 sm:w-5 sm:h-5 ${
-              selectedRows.length === 0 ? "text-gray-400" : "text-blue-600"
+              selectedRows.length !== 1 ? "text-gray-400" : "text-blue-600"
             }`}
           />
         </button>
 
-        {/* Delete Button */}
         <button
           disabled={selectedRows.length === 0}
+          onClick={() => setIsDeleteModalOpen(true)}
           className={`p-2 border rounded-lg transition-colors ${
             selectedRows.length === 0
               ? "border-gray-200 bg-gray-100 cursor-not-allowed opacity-50"
@@ -142,7 +213,6 @@ const Table: React.FC = () => {
         </button>
       </div>
 
-      {/* Table */}
       <div className="overflow-x-auto -mx-3 sm:mx-0">
         <table className="w-full min-w-[640px]">
           <thead>
@@ -151,7 +221,10 @@ const Table: React.FC = () => {
                 <input
                   type="checkbox"
                   className="w-4 h-4 rounded border-gray-300 cursor-pointer"
-                  checked={selectedRows.length === transactions.length}
+                  checked={
+                    transactions.length > 0 &&
+                    selectedRows.length === transactions.length
+                  }
                   onChange={toggleSelectAll}
                 />
               </th>
@@ -165,9 +238,6 @@ const Table: React.FC = () => {
                 Kategori
               </th>
               <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
-                Status
-              </th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
                 Jumlah
               </th>
               <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
@@ -177,7 +247,6 @@ const Table: React.FC = () => {
           </thead>
           <tbody>
             {loading ? (
-              // Loading skeleton
               Array.from({ length: 3 }).map((_, idx) => (
                 <tr key={idx} className="border-b border-gray-100">
                   <td className="py-3 px-4">
@@ -193,9 +262,6 @@ const Table: React.FC = () => {
                     <div className="h-4 bg-gray-200 animate-pulse rounded"></div>
                   </td>
                   <td className="py-3 px-4">
-                    <div className="h-6 w-20 bg-gray-200 animate-pulse rounded-full"></div>
-                  </td>
-                  <td className="py-3 px-4">
                     <div className="h-4 bg-gray-200 animate-pulse rounded"></div>
                   </td>
                   <td className="py-3 px-4">
@@ -204,14 +270,12 @@ const Table: React.FC = () => {
                 </tr>
               ))
             ) : transactions.length === 0 ? (
-              // Empty state
               <tr>
-                <td colSpan={7} className="py-8 text-center text-gray-500">
+                <td colSpan={6} className="py-8 text-center text-gray-500">
                   Tidak ada transaksi
                 </td>
               </tr>
             ) : (
-              // Transaction rows
               transactions.map((transaction) => (
                 <tr
                   key={transaction.id}
@@ -240,15 +304,6 @@ const Table: React.FC = () => {
                   <td className="py-3 px-4 text-sm text-gray-900">
                     {transaction.category || "-"}
                   </td>
-                  <td className="py-3 px-4">
-                    <span
-                      className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(
-                        transaction.status
-                      )}`}
-                    >
-                      {getStatusLabel(transaction.status)}
-                    </span>
-                  </td>
                   <td
                     className={`py-3 px-4 text-sm font-medium ${
                       transaction.type === "Income"
@@ -275,12 +330,33 @@ const Table: React.FC = () => {
         onClose={() => {
           setIsFilterModalOpen(false);
         }}
+        onApply={setActiveFilters}
       />
       <AddTransactionModal
         isOpen={isAddTransactionModalOpen}
         onClose={() => {
           setIsAddTransactionModalOpen(false);
         }}
+        onSuccess={onRefresh}
+      />
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDelete}
+        title="Hapus Transaksi"
+        message={`Apakah Anda yakin ingin menghapus ${selectedRows.length} transaksi yang dipilih? Data yang dihapus tidak dapat dikembalikan.`}
+        confirmLabel="Hapus Transaksi"
+        isLoading={isDeleting}
+      />
+
+      <EditTransactionModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setTransactionToEdit(null);
+        }}
+        onSuccess={onRefresh}
+        transaction={transactionToEdit}
       />
     </div>
   );

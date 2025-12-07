@@ -8,8 +8,8 @@ import { useTransactions } from "../hooks/useTransactions";
 const Transaksi: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Fetch transaction totals from backend
-  const { totals, loading } = useTransactions();
+  // Fetch transaction totals and list from backend
+  const { transactions, totals, loading, refreshData } = useTransactions();
 
   return (
     <div className="p-3 sm:p-5 flex flex-col gap-4 sm:gap-5">
@@ -35,7 +35,11 @@ const Transaksi: React.FC = () => {
         />
       </div>
       <div>
-        <Table />
+        <Table
+          transactions={transactions}
+          loading={loading}
+          onRefresh={refreshData}
+        />
       </div>
       <AiButton onClick={() => setIsModalOpen(true)} />
       {isModalOpen && (
