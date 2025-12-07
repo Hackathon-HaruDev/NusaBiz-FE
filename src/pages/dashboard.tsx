@@ -2,7 +2,6 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import React, { useState } from "react";
 import Card from "../components/dashboard/Card";
 import AiButton from "../components/aiButton";
-import Chart from "react-apexcharts";
 import { useDashboard } from "../hooks/useDashboard";
 import { TransactionHistory } from "../components/dashboard/TransactionHistory";
 import { getTodayOmzet, getYesterdayOmzet } from "../helpers/Omzet";
@@ -20,67 +19,6 @@ const Dashboard:React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const saldo = calculateBalanceFromTransactions(transactions);
   const monthlySeries = getMonthlyChartSeries(transactions);
-
-  const state = {
-    options: {
-      chart: {
-        id: "basic-bar",
-      },
-      colors: ["#31A3D3"],
-      plotOptions: {
-        bar: {
-          borderRadius: 6,
-          columnWidth: "45%",
-        },
-      },
-      dataLabels: {
-        enabled: false,
-      },
-      grid: {
-        borderColor: "#e5e5e5",
-      },
-      tooltip: {
-        y: {
-          formatter: (val: { toLocaleString: () => any }) =>
-            `Rp ${val.toLocaleString()}`,
-        },
-      },
-      xaxis: {
-        categories: [
-          "Januari",
-          "Februari",
-          "Maret",
-          "April",
-          "Mei",
-          "Juni",
-          "Juli",
-          "Agustus",
-          "September",
-          "Oktober",
-          "November",
-          "Desember",
-        ],
-        labels: {
-          style: {
-            colors: "#6b7280",
-            fontSize: "13px",
-          },
-        },
-      },
-      yaxis: {
-        labels: {
-          style: { colors: "#6b7280" },
-        },
-      },
-    },
-    series: [
-      {
-        name: "Penjualan",
-        data: [30, 40, 45, 50, 49, 60, 70, 91, 70, 12, 40, 100],
-      },
-    ],
-  };
-
     return(
         <div className="p-5 flex flex-col gap-5">
             <p className="text-2xl font-bold">Dashboard {activeBusiness?.business_name}</p>
