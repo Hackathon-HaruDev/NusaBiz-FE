@@ -18,7 +18,7 @@ const header:React.FC<props> = ({tooglesidebar}) => {
                 </button>
                 <p className="font-bold w-full text-center text-2xl select-none cursor-pointer"  onClick={()=>navigate("/")}>NusaBiz</p>
             </div>
-            <img src={user?.image} className="w-8 h-8 rounded-full" />
+                <img src={user?.image || "/images/placeholder/profile.png"} className="w-8 h-8 rounded-full object-cover" />
         </div>
     )
 }
