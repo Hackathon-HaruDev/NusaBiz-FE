@@ -4,7 +4,7 @@ import { listed } from './listed';
 import Dashboard from '../pages/dashboard';
 import LandingPage from '../pages/landing';
 import Produk from '../pages/produk';
-
+import Transaksi from '../pages/transaksi';
 export const Router = createBrowserRouter([
     {
     path: '/',
@@ -24,7 +24,7 @@ export const Router = createBrowserRouter([
         },
         {
             path: listed.transaksi,
-            element: <div>Test</div>
+            element: <Transaksi />
         },
         {
             path: listed.produk,
