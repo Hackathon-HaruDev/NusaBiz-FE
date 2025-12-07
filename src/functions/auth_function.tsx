@@ -7,123 +7,140 @@ import APICall from "./callapi";
 type AuthOption = "masuk" | "daftar";
 
 export const authFunction = () => {
-    const [currentTab, setCurrentTab] = useState<AuthOption>('masuk');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [forgotPasswordMessage, setForgotPasswordMessage] = useState<string | null>(null);
-
-    const navigate = useNavigate()
-
-    const handleTabChange = (tab: AuthOption) => {
-        setCurrentTab(tab);
-        setEmail('');
-        setPassword('');
-        setConfirmPassword(''); 
-        setError(null);
-        setIsLoading(false);
-        console.log(`Tab changed to: ${tab}`);
-    };
-    
-    const registerUser = async () => {
-        if (password !== confirmPassword) {
-            setError('Password dan Konfirmasi Password tidak cocok!');
-            return;
-        }
+  const [currentTab, setCurrentTab] = useState<AuthOption>("masuk");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showBusinessSetup, setShowBusinessSetup] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [forgotPasswordMessage, setForgotPasswordMessage] = useState<
+    string | null
+  >(null);
 
-        } catch (err: any) {
-            console.error('Register Error:', err.message);
-            setError(err.message || 'Terjadi kesalahan jaringan.');
-        }
-    };
+  const navigate = useNavigate();
 
-    const loginUser = async () => {
-        try {
-            const data = await APICall('/auth/login', 'POST', { email, password });
-            
-            const token = data.token;
-            localStorage.setItem('userToken', token);
-            navigate(listed.dashboard);
-            setError(null);
+  const handleTabChange = (tab: AuthOption) => {
+    setCurrentTab(tab);
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+    setError(null);
+    setForgotPasswordMessage(null);
+    setIsLoading(false);
+  };
 
-        } catch (err: any) {
-            console.error('Login Error:', err.message);
-            setError(err.message || 'Terjadi kesalahan jaringan.');
-        }
-    };
+  const registerUser = async () => {
+    if (password !== confirmPassword) {
+      setError("Password dan Konfirmasi Password tidak cocok!");
+      return;
+    }
 
-    const handleForgotPassword = async (emailToReset: string) => {
-        setError(null);
-        setForgotPasswordMessage(null);
-        setIsLoading(true);
-        
-        try {
-            await APICall('/auth/forgot-password', 'POST', { email: emailToReset });
-            
-            setForgotPasswordMessage('Jika email Anda terdaftar, tautan pemulihan sandi telah dikirim ke kotak masuk Anda.');
+    try {
+      const data = await APICall("/auth/register", "POST", { email, password });
 
-        } catch (err: any) {
-            console.error('Forgot Password API Error:', err.message);
-            setForgotPasswordMessage('Jika email Anda terdaftar, tautan pemulihan sandi telah dikirim ke kotak masuk Anda.');
+      const token = data.token;
+      localStorage.setItem("userToken", token);
+      localStorage.setItem("access_token", token);
 
-        } finally {
-            setIsLoading(false);
-        }
-    };
-    
-    const handleAuth = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError(null);
-        setIsLoading(true);
+      // Navigate to dashboard after successful registration
+      navigate(listed.dashboard);
+      setError(null);
+    } catch (err: any) {
+      console.error("Register Error:", err.message);
+      setError(err.message || "Terjadi kesalahan jaringan.");
+    }
+  };
 
-        if (currentTab === 'daftar') {
-            await registerUser();
-        } else {
-          // User has no businesses yet - prompt setup
-          console.log("⚠️ No businesses found for user. Prompting setup.");
-          setShowBusinessSetup(true);
-        }
-        
-        setIsLoading(false);
-    };
+  const loginUser = async () => {
+    try {
+      const data = await APICall("/auth/login", "POST", { email, password });
 
-    const handleForgotPasswordClick = (e: React.MouseEvent) => {
-        e.preventDefault();
-        
-        if (isLoading) return;
+      const token = data.token;
+      localStorage.setItem("userToken", token);
+      localStorage.setItem("access_token", token);
 
-        if (!email) {
-            setError('Masukkan alamat email Anda terlebih dahulu di kolom Email.');
-            return;
-        }
-        
-        handleForgotPassword(email);
-    };
+      navigate(listed.dashboard);
+      setError(null);
+    } catch (err: any) {
+      console.error("Login Error:", err.message);
+      setError(err.message || "Terjadi kesalahan jaringan.");
+    }
+  };
 
-    return {
-        // State
-        currentTab, email, password, confirmPassword,
-        showPassword, showConfirmPassword,
-        isLoading, error,
-        
-        // Handlers
-        handleTabChange, handleAuth,
-        setEmail, setPassword, setConfirmPassword,
-        setShowPassword, setShowConfirmPassword,
+  const handleForgotPassword = async (emailToReset: string) => {
+    setError(null);
+    setForgotPasswordMessage(null);
+    setIsLoading(true);
 
-        forgotPasswordMessage,handleForgotPassword, handleForgotPasswordClick
-    };
-}
+    try {
+      await APICall("/auth/forgot-password", "POST", { email: emailToReset });
+
+      setForgotPasswordMessage(
+        "Jika email Anda terdaftar, tautan pemulihan sandi telah dikirim ke kotak masuk Anda."
+      );
+    } catch (err: any) {
+      console.error("Forgot Password API Error:", err.message);
+      setForgotPasswordMessage(
+        "Jika email Anda terdaftar, tautan pemulihan sandi telah dikirim ke kotak masuk Anda."
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setIsLoading(true);
+
+    if (currentTab === "daftar") {
+      await registerUser();
+    } else {
+      await loginUser();
+    }
+
+    setIsLoading(false);
+  };
+
+  const handleForgotPasswordClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    if (isLoading) return;
+
+    if (!email) {
+      setError("Masukkan alamat email Anda terlebih dahulu di kolom Email.");
+      return;
+    }
+
+    handleForgotPassword(email);
+  };
+
+  return {
+    // State
+    currentTab,
+    email,
+    password,
+    confirmPassword,
+    showPassword,
+    showConfirmPassword,
+    isLoading,
+    error,
+
+    // Handlers
+    handleTabChange,
+    handleAuth,
+    setEmail,
+    setPassword,
+    setConfirmPassword,
+    setShowPassword,
+    setShowConfirmPassword,
+
+    forgotPasswordMessage,
+    handleForgotPassword,
+    handleForgotPasswordClick,
+  };
+};
