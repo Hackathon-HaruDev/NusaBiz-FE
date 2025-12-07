@@ -6,6 +6,7 @@ export const ProfileFunction = () => {
     const [initialBusiness, setInitialBusiness] = useState<any>(null);
 
     const [userFormData, setUserFormData] = useState<any>({ fullName: '', whatsappNumber: '', email: '', profileImage: '' });
+    const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
     const [businessFormData, setBusinessFormData] = useState<any>({ businessName: '', category: '', location: '' });
 
     const [oldPassword, setOldPassword] = useState('');
@@ -17,6 +18,8 @@ export const ProfileFunction = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState('');
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchInitialData = async () => {
@@ -68,10 +71,11 @@ export const ProfileFunction = () => {
         
         const isPasswordChanged = !!(oldPassword && newPassword);
 
+        const isImageChanged = !!selectedImageFile;
+
         setIsDirty(isUserDataChanged || isBusinessDataChanged || isPasswordChanged);
 
-    }, [userFormData, businessFormData, oldPassword, newPassword, initialUser, initialBusiness]);
-
+    },[userFormData, businessFormData, oldPassword, newPassword, initialUser, initialBusiness, selectedImageFile]);
     const handleUserChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUserFormData({ ...userFormData, [e.target.id]: e.target.value });
         setError(null);
@@ -83,9 +87,82 @@ export const ProfileFunction = () => {
         setError(null);
         setSuccessMessage('');
     };
-    
-    const handlePhotoChange = () => {
-        alert("Simulasi: Mengubah foto profil (API PUT /users/me multipart)");
+
+    const toggleModal = (open: boolean) => {
+        setIsModalOpen(open);
+        setError(null);
+        setSuccessMessage('');
+        if (!open) {
+            setSelectedImageFile(null); 
+             // Set kembali URL pratinjau ke URL awal untuk menghilangkan pratinjau file yang belum di-save
+            setUserFormData((prev: any) => ({
+                ...prev,
+                profileImage: initialUser?.profileImage || 'https://placehold.co/400x400/cccccc/333333?text=N/A'
+            }));
+        }
+    }
+
+    const handleImageFileChangeFromModal = (file: File | null) => {
+        if (file) {
+            setSelectedImageFile(file);
+            // Tampilkan pratinjau gambar baru secara lokal
+            setUserFormData((prev: any) => ({
+                ...prev,
+                profileImage: URL.createObjectURL(file) 
+            }));
+        } else {
+            setSelectedImageFile(null);
+             // Jika file di-reset, kembali ke URL awal (atau default)
+            setUserFormData((prev: any) => ({
+                ...prev,
+                profileImage: initialUser?.profileImage || 'https://placehold.co/400x400/cccccc/333333?text=N/A'
+            }));
+        }
+    };
+
+    const handleDeleteImage = () => {
+        setSelectedImageFile(null); 
+        setUserFormData((prev: any) => ({
+            ...prev,
+            profileImage: initialUser?.profileImage || 'https://placehold.co/400x400/cccccc/333333?text=N/A'
+        }));
+        toggleModal(false);
+    };
+
+    const handleUpdateProfileImage = async (): Promise<any> => {
+        if (!selectedImageFile) return Promise.resolve(null);
+
+        const formData = new FormData();
+        formData.append('avatar', selectedImageFile); 
+
+        const isUserDataChanged = (userFormData.fullName !== initialUser.fullName || userFormData.whatsappNumber !== initialUser.whatsappNumber);
+        if (isUserDataChanged) {
+             formData.append('full_name', userFormData.fullName);
+             formData.append('whatsapp_number', userFormData.whatsappNumber);
+        }
+        
+        try {
+            const data = await APICall('/users/me', 'PUT', formData, true);
+            
+            const newImage = data.image || userFormData.profileImage;
+            
+            const updatedUser = { 
+                ...userFormData, 
+                profileImage: newImage,
+                fullName: data.full_name || userFormData.fullName,
+                whatsappNumber: data.whatsapp_number || userFormData.whatsappNumber,
+            };
+            
+            setUserFormData(updatedUser);
+            setInitialUser(updatedUser); 
+            setSelectedImageFile(null);
+            
+            return Promise.resolve(updatedUser);
+
+        } catch (err: any) {
+            console.error("Gagal mengunggah foto profil:", err);
+            throw new Error(`Gagal mengunggah foto: ${err.message}`); 
+        }
     };
 
     const toggleOldPasswordVisibility = () => setShowOldPassword(prev => !prev);
@@ -102,6 +179,15 @@ export const ProfileFunction = () => {
         const updatePromises = [];
         let finalUserUpdate = initialUser;
         let finalBusinessUpdate = initialBusiness;
+
+        if (selectedImageFile) {
+            updatePromises.push(
+                handleUpdateProfileImage()
+                    .then(updatedUser => {
+                        if(updatedUser) finalUserUpdate = updatedUser;
+                    })
+            );
+        }
         
         const userPayload = { 
             full_name: userFormData.fullName, 
@@ -109,14 +195,16 @@ export const ProfileFunction = () => {
         };
         const isUserDataChanged = (userFormData.fullName !== initialUser.fullName || userFormData.whatsappNumber !== initialUser.whatsappNumber);
 
-        if (isUserDataChanged) {
+        if (isUserDataChanged && !selectedImageFile) { 
             updatePromises.push(
                 APICall('/users/me', 'PUT', userPayload)
                     .then(data => {
                         console.log("SUCCESS: User Profile Updated");
-                        finalUserUpdate = { ...userFormData, profileImage: initialUser.profileImage };
+                        finalUserUpdate = { ...userFormData, profileImage: finalUserUpdate.profileImage };
                     })
             );
+        } else if (isUserDataChanged && selectedImageFile) {
+
         }
 
         const businessPayload = { 
@@ -193,7 +281,14 @@ export const ProfileFunction = () => {
         setOldPassword,
         setNewPassword,
         handleSaveChanges,
-        handlePhotoChange,
+
+        // Handler Image
+        isModalOpen,
+        toggleModal,
+        handleImageFileChange: handleImageFileChangeFromModal,
+        selectedImageFile,
+        handleDeleteImage,
+        handleUpdateProfileImage,
         
         // Handler toggle visibility
         toggleOldPasswordVisibility,
