@@ -26,29 +26,28 @@ const Produk:React.FC = () => {
       {id:"harga-terendah", nama: "Harga Terendah"}
     ]
 
-    if (loading || productLoading) {
-      return <p className="p-5">Loading produk...</p>;
-    }
+    
     return(
         <div className="p-5 flex flex-col gap-5">
             <p className="text-2xl font-bold">Produk</p>
-              <div className="flex flex-row justify-between">
-                <DropDown title="Urutkan Berdasrakan" data={dropdown} onChange={setSortBy}/>
-                {/* <button onClick={()=>{setIsAddProductModalOpen(true)}} className="flex flex-row gap-1 bg-(--primary) text-white items-center justify-center p-2 rounded-lg hover:scale-105 transition-all">
-                  <PlusIcon />
-                  <p>Tambah Produk</p>
-                </button> */}
-                <button className="btn btn-[#192335]" onClick={()=>{setIsAddProductModalOpen(true)}}><PlusIcon/> Tambah Produk</button>
+              <div className="flex flex-row justify-between md:scale-100">
+                <DropDown title="Urutkan" data={dropdown} onChange={setSortBy}/>
+                <button className="btn btn-[#192335] bg-(--primary)" onClick={()=>{setIsAddProductModalOpen(true)}}><PlusIcon/> Tambah Produk</button>
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              {loading || productLoading ? 
+              <p>Loading Data Produk</p> 
+              :
+              <div className="grid md:grid-cols-3 gap-4">
                   {sortedProducts.map((data, index)=>(
                       <div key={index}>
                           <ProdukCard data={data}/>
                       </div>
                   ))}
               </div>
+              }
+              
           <AddProductModal isOpen={isAddProductModalOpen} onClose={()=>{setIsAddProductModalOpen(false)}}/>
-          <AiButton onClick={()=>{setIsAIModalOpen(true)}} />
+          <AiButton isLeft onClick={()=>{setIsAIModalOpen(true)}} />
           <AiModal isOpen={isAIModalOpen} onClose={()=>{setIsAIModalOpen(false)}}/>
         </div>
     )
