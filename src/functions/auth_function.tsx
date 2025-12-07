@@ -2,6 +2,7 @@ import { useState } from 'react';
 import React from 'react'; 
 import { useNavigate } from 'react-router-dom';
 import { listed } from '../constant/listed';
+import APICall from './callapi';
 
 type AuthOption = "masuk" | "daftar";
 
@@ -36,20 +37,11 @@ export const authFunction = () => {
         }
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
+            const data = await APICall('/auth/register', 'POST', { 
+                email, 
+                password,
             });
 
-            const result = await response.json();
-            
-            if (!response.ok || !result.success) {
-                const errorMessage = result.error?.message || 'Pendaftaran gagal. Coba lagi.';
-                throw new Error(errorMessage);
-            }
-            
-            console.log("Pendaftaran Berhasil!", result.data);
             alert('Pendaftaran berhasil! Silakan Login.');
             setCurrentTab('masuk');
             setError(null);
@@ -62,20 +54,9 @@ export const authFunction = () => {
 
     const loginUser = async () => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-
-            const result = await response.json();
-
-            if (!response.ok || !result.success) {
-                const errorMessage = result.error?.message || 'Login gagal. Cek email dan password Anda.';
-                throw new Error(errorMessage);
-            }
+            const data = await APICall('/auth/login', 'POST', { email, password });
             
-            const token = result.data.token;
+            const token = data.token;
             localStorage.setItem('userToken', token);
             navigate(listed.dashboard);
             setError(null);

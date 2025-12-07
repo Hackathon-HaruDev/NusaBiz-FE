@@ -4,8 +4,10 @@ import { listed } from './listed';
 import Dashboard from '../pages/dashboard';
 import LandingPage from '../pages/landing';
 import Produk from '../pages/produk';
+import Transaksi from '../pages/transaksi';
 import Auth from '../pages/auth';
 import AuthProtectLayout from '../components/AuthProtectLayout';
+import Profile from '../pages/profile';
 
 export const Router = createBrowserRouter([
     {
@@ -26,7 +28,7 @@ export const Router = createBrowserRouter([
         },
         {
             path: listed.transaksi,
-            element: <div>Test</div>
+            element: <Transaksi />
         },
         {
             path: listed.produk,
@@ -34,7 +36,7 @@ export const Router = createBrowserRouter([
         },
         {
             path: listed.profile,
-            element: <div>Profile</div>
+            element: <Profile />
         }
     ],
     },
