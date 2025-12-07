@@ -1,6 +1,13 @@
 export const APICall = async (endpoint: string, method: string = 'GET', data: any = null, isFormData: boolean = false) => {
     const token = localStorage.getItem('userToken');
-    if (!token && endpoint !== '/auth/login' && endpoint !== '/auth/register') {
+
+    const isPublicEndpoint = [
+        '/auth/login', 
+        '/auth/register', 
+        '/auth/forgot-password',
+    ].some(publicPath => endpoint.includes(publicPath));
+
+    if (!token && !isPublicEndpoint) {
         throw new Error('Autentikasi diperlukan. Token hilang.');
     }
 

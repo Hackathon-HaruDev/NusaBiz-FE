@@ -8,6 +8,7 @@ import Transaksi from '../pages/transaksi';
 import Auth from '../pages/auth';
 import AuthProtectLayout from '../components/AuthProtectLayout';
 import Profile from '../pages/profile';
+import ResetPassword from '../pages/resetpassword';
 
 export const Router = createBrowserRouter([
     {
@@ -47,5 +48,9 @@ export const Router = createBrowserRouter([
     {
         path: listed.auth,
         element: <Auth />
+    },
+    {
+        path: listed.resetPassword,
+        element: <ResetPassword />
     }
 ])
