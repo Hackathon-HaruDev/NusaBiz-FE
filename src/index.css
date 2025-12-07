@@ -9,23 +9,13 @@
     background: #F8FAFC;
     font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
- /* font-family: var(--font-karma), serif; */
-/* Apply the custom font globally */
-/* ::-webkit-scrollbar {
-   
-    display: none;
-} */
-
 ::-webkit-scrollbar {
   display: none;
 }
 
-/* Hilangkan scrollbar di Firefox */
 * {
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none; 
 }
-
-/* Hilangkan scrollbar di IE/Edge lama */
 * {
-  -ms-overflow-style: none; /* IE & Edge Legacy */
+  -ms-overflow-style: none; 
 }

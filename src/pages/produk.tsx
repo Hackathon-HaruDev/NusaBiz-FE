@@ -4,7 +4,6 @@ import { PlusIcon } from "lucide-react";
 import AiButton from "../components/aiButton";
 import DropDown from "../components/dropdown";
 import { useProducts } from "../hooks/useProduct";
-import { useDashboardContext } from "../context/DashboardProvider";
 import { sortProducts } from "../helpers/sortProducts";
 import AiModal from "../components/aiModal";
 import AddProductModal from "../components/produk/addproductmodal";
