@@ -30,30 +30,30 @@ const Auth: React.FC = () => {
     setShowConfirmPassword(!showConfirmPassword);
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-black/30 p-4 sm:p-6 md:p-8">
-      <div className="bg-white/75 p-1 rounded-3xl shadow-2xl w-full max-w-[90%] sm:max-w-md md:max-w-lg lg:max-w-xl">
+    <div className="flex justify-center items-center min-h-screen bg-[#0f172a] p-4 sm:p-6 md:p-8">
+      <div className="bg-[#1e293b] p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-[90%] sm:max-w-md border border-gray-700">
         <AuthToggle activeTab={currentTab} onTabChange={handleTabChange} />
 
-        <div className="flex flex-col items-center mb-4 sm:mb-6 px-4 sm:px-6 md:px-8">
-          {/* <div className="w-12 h-12 flex items-center justify-center rounded-full bg-white border border-gray-200 shadow-lg mb-2">
-                        <img src="https://placehold.co/400" alt="logo" className='rounded-full' />
-                    </div> */}
-          <p className="text-gray-800 font-semibold text-base sm:text-lg md:text-xl mb-1">
+        <div className="flex flex-col items-center mb-6 mt-4">
+          <p className="text-white font-bold text-xl sm:text-2xl mb-1">
             NusaBiz
           </p>
-          <p className="text-gray-500 text-xs sm:text-sm md:text-base text-center">
+          <p className="text-gray-400 text-xs sm:text-sm text-center">
             Aplikasi Manajemen Bisnis Berbasis AI
           </p>
         </div>
 
-        <form
-          className="flex flex-col gap-3 sm:gap-4 px-4 sm:px-6 md:px-8 pb-6 sm:pb-8"
-          onSubmit={handleAuth}
-        >
+        {error && (
+          <div className="mb-4 p-3 bg-red-900/20 border border-red-500/50 rounded-lg text-red-400 text-sm">
+            {error}
+          </div>
+        )}
+
+        <form className="flex flex-col gap-4" onSubmit={handleAuth}>
           <div>
             <label
               htmlFor="email"
-              className="block text-xs sm:text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-300 mb-2"
             >
               Email
             </label>
@@ -63,7 +63,7 @@ const Auth: React.FC = () => {
               placeholder="Masukkan email..."
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-gray-100 p-2.5 sm:p-3 text-xs sm:text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 transition duration-150"
+              className="w-full bg-[#0f172a] text-white border border-gray-600 p-3 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 placeholder-gray-500"
               required
             />
           </div>
@@ -71,7 +71,7 @@ const Auth: React.FC = () => {
           <div>
             <label
               htmlFor="password"
-              className="block text-xs sm:text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-300 mb-2"
             >
               Password
             </label>
@@ -82,7 +82,7 @@ const Auth: React.FC = () => {
                 placeholder="Masukkan password..."
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-gray-100 p-2.5 sm:p-3 text-xs sm:text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 transition duration-150 pr-10"
+                className="w-full bg-[#0f172a] text-white border border-gray-600 p-3 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 pr-10 placeholder-gray-500"
                 required
               />
               <PasswordObscure
@@ -93,9 +93,9 @@ const Auth: React.FC = () => {
             {currentTab === "masuk" && (
               <a
                 href="#"
-                className="block text-right text-[10px] sm:text-xs text-blue-500 mt-1 hover:text-blue-700 transition duration-150"
+                className="block text-right text-xs text-blue-400 mt-2 hover:text-blue-300 transition duration-150"
               >
-                lupa password
+                Lupa password?
               </a>
             )}
           </div>
@@ -104,7 +104,7 @@ const Auth: React.FC = () => {
             <div>
               <label
                 htmlFor="cpassword"
-                className="block text-xs sm:text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-300 mb-2"
               >
                 Konfirmasi Password
               </label>
@@ -115,7 +115,7 @@ const Auth: React.FC = () => {
                   placeholder="Konfirmasi Password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full bg-gray-100 p-2.5 sm:p-3 text-xs sm:text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 transition duration-150 pr-10"
+                  className="w-full bg-[#0f172a] text-white border border-gray-600 p-3 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 pr-10 placeholder-gray-500"
                   required
                 />
                 <PasswordObscure
@@ -128,20 +128,18 @@ const Auth: React.FC = () => {
 
           <button
             type="submit"
-            className="w-full bg-white text-black font-semibold p-2.5 sm:p-3 mt-2 sm:mt-4 rounded-lg shadow-md hover:bg-white transition duration-150 text-sm sm:text-base"
+            className="w-full bg-blue-600 text-white font-semibold p-3 mt-4 rounded-lg hover:bg-blue-700 transition duration-150 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isLoading}
           >
-            {isLoading ? (
-              <span>Loading...</span>
-            ) : currentTab === "masuk" ? (
-              "Login"
-            ) : (
-              "Register"
-            )}
+            {isLoading
+              ? "Loading..."
+              : currentTab === "masuk"
+              ? "Login"
+              : "Register"}
           </button>
         </form>
       </div>
 
-      {/* Business Setup Modal - shown after successful registration */}
       <BusinessSetupModal
         isOpen={showBusinessSetup}
         onClose={() => setShowBusinessSetup(false)}

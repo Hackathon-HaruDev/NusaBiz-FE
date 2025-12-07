@@ -2,17 +2,20 @@ import { X, Upload, ImagePlus, Trash2, Loader2 } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { useToast } from "../../context/ToastContext";
 import APICall from "../../functions/callapi";
+import type { Product } from "../../types/product";
 
-interface AddProductModalProps {
+interface EditProductModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
+  product: Product | null;
 }
 
-const AddProductModal: React.FC<AddProductModalProps> = ({
+const EditProductModal: React.FC<EditProductModalProps> = ({
   isOpen,
   onClose,
   onSuccess,
+  product,
 }) => {
   const { showToast } = useToast();
   const [isAnimating, setIsAnimating] = useState(false);
@@ -23,17 +26,35 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
   const [hargaJual, setHargaJual] = useState("");
   const [hargaBeli, setHargaBeli] = useState("");
   const [stok, setStok] = useState("");
-  const [deskripsi, setDeskripsi] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Reset form when modal opens/closes
+  // Populate form when product changes
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && product) {
       setIsAnimating(true);
-    } else {
+      setNamaProduk(product.name || "");
+      setHargaJual(
+        product.selling_price
+          ? formatRupiah(product.selling_price.toString())
+          : ""
+      );
+      setHargaBeli(
+        product.purchase_price
+          ? formatRupiah(product.purchase_price.toString())
+          : ""
+      );
+      setStok(product.current_stock?.toString() || "");
+      setImagePreview(product.image || null);
+      setImageFile(null);
+    }
+  }, [isOpen, product]);
+
+  // Reset form when modal closes
+  useEffect(() => {
+    if (!isOpen) {
       resetForm();
     }
   }, [isOpen]);
@@ -43,7 +64,6 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
     setHargaJual("");
     setHargaBeli("");
     setStok("");
-    setDeskripsi("");
     setImageFile(null);
     setImagePreview(null);
     if (fileInputRef.current) {
@@ -54,7 +74,6 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
   const handleImageChange = (file: File | null) => {
     if (file) {
       if (file.type.startsWith("image/")) {
-        // Check file size (max 5MB)
         if (file.size > 5 * 1024 * 1024) {
           showToast("Ukuran gambar maksimal 5MB", "error");
           return;
@@ -131,7 +150,8 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
   };
 
   const handleSubmit = async () => {
-    // Validation
+    if (!product) return;
+
     if (!namaProduk.trim()) {
       showToast("Nama produk wajib diisi", "error");
       return;
@@ -146,13 +166,8 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
     setIsSubmitting(true);
 
     try {
-      // Create FormData for file upload
       const formData = new FormData();
       formData.append("name", namaProduk.trim());
-
-      if (stok) {
-        formData.append("current_stock", stok);
-      }
 
       if (hargaBeli) {
         formData.append("purchase_price", parseRupiah(hargaBeli).toString());
@@ -162,36 +177,38 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
         formData.append("selling_price", parseRupiah(hargaJual).toString());
       }
 
+      // Note: base_stock update if needed
+      if (stok) {
+        formData.append("base_stock", stok);
+      }
+
       if (imageFile) {
         formData.append("image", imageFile);
       }
 
-      // Call API with FormData
       await APICall(
-        `/businesses/${businessId}/products`,
-        "POST",
+        `/businesses/${businessId}/products/${product.id}`,
+        "PUT",
         formData,
-        true // isFormData = true
+        true
       );
 
-      showToast("Produk berhasil ditambahkan!", "success");
+      showToast("Produk berhasil diperbarui!", "success");
 
-      // Call onSuccess callback to refresh product list
       if (onSuccess) {
         onSuccess();
       }
 
-      // Close modal
       handleClose();
     } catch (error: any) {
-      console.error("Error creating product:", error);
-      showToast(error.message || "Gagal menambahkan produk", "error");
+      console.error("Error updating product:", error);
+      showToast(error.message || "Gagal memperbarui produk", "error");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !product) return null;
 
   return (
     <div
@@ -209,10 +226,8 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-700">
           <div>
-            <h2 className="text-xl font-semibold text-white">Tambah Produk</h2>
-            <p className="text-sm text-gray-400 mt-1">
-              Isi data data produk di bawah
-            </p>
+            <h2 className="text-xl font-semibold text-white">Edit Produk</h2>
+            <p className="text-sm text-gray-400 mt-1">Perbarui data produk</p>
           </div>
           <button
             onClick={handleClose}
@@ -342,9 +357,11 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
               </div>
             </div>
 
-            {/* Stok */}
+            {/* Base Stok */}
             <div>
-              <label className="block text-sm text-gray-300 mb-2">Stok</label>
+              <label className="block text-sm text-gray-300 mb-2">
+                Base Stok
+              </label>
               <input
                 type="number"
                 value={stok}
@@ -352,20 +369,6 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
                 className="w-full bg-[#2C3E50] text-white rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 placeholder="0"
                 min="0"
-              />
-            </div>
-
-            {/* Deskripsi */}
-            <div>
-              <label className="block text-sm text-gray-300 mb-2">
-                Deskripsi
-              </label>
-              <textarea
-                rows={4}
-                value={deskripsi}
-                onChange={(e) => setDeskripsi(e.target.value)}
-                className="w-full bg-[#2C3E50] text-white rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none"
-                placeholder="Masukkan deskripsi produk (optional)"
               />
             </div>
           </div>
@@ -376,7 +379,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-green-800 disabled:cursor-not-allowed text-white font-medium py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+            className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed text-white font-medium py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
           >
             {isSubmitting ? (
               <>
@@ -384,7 +387,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
                 Menyimpan...
               </>
             ) : (
-              "Simpan"
+              "Simpan Perubahan"
             )}
           </button>
           <button
@@ -400,4 +403,4 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
   );
 };
 
-export default AddProductModal;
+export default EditProductModal;
