@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { createBusiness } from "../../services/api/business.service";
+import { createTransaction } from "../../services/api/transaction.service";
 import { useNavigate } from "react-router-dom";
 import { listed } from "../../constant/listed";
 
@@ -54,35 +55,41 @@ const BusinessSetupModal: React.FC<BusinessSetupModalProps> = ({
     try {
       setIsSubmitting(true);
 
-      // Validate required fields
       if (!businessName.trim()) {
         alert("Nama bisnis wajib diisi!");
         return;
       }
 
-      // Submit to backend
+      const initialCapital = currentBalance
+        ? parseFloat(currentBalance.replace(/\./g, ""))
+        : 0;
+
       const businessData = {
         business_name: businessName,
         category: category || undefined,
         location: location || undefined,
-        current_balance: currentBalance
-          ? parseFloat(currentBalance.replace(/\./g, ""))
-          : 0,
+        current_balance: 0,
       };
 
-      console.log("🏢 Creating business with data:", businessData);
       const createdBusiness = await createBusiness(businessData);
-      console.log("✅ Business created:", createdBusiness);
 
-      // Save business_id to localStorage
       localStorage.setItem("business_id", createdBusiness.id.toString());
-      console.log("💾 Business ID saved to localStorage:", createdBusiness.id);
+
+      if (initialCapital > 0) {
+        try {
+          await createTransaction({
+            type: "Income",
+            category: "Modal",
+            amount: initialCapital,
+            description: "Modal awal",
+          });
+        } catch {}
+      }
 
       alert("Bisnis berhasil didaftarkan! Selamat datang di NusaBiz.");
       onClose();
       navigate(listed.dashboard);
     } catch (error: any) {
-      console.error("❌ Failed to create business:", error);
       alert(
         error.response?.data?.message ||
           "Gagal mendaftarkan bisnis. Silakan coba lagi."

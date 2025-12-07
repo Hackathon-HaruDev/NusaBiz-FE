@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import AuthToggle from "../components/auth/toggle";
 import { authFunction } from "../functions/auth_function";
 import PasswordObscure from "../components/auth/obscure";
+import { listed } from "../constant/listed";
+import BusinessSetupModal from "../components/business/BusinessSetupModal";
 
 const Auth: React.FC = () => {
+  const navigate = useNavigate();
+
   const {
     currentTab,
     handleTabChange,
@@ -22,7 +27,19 @@ const Auth: React.FC = () => {
     error,
     forgotPasswordMessage,
     handleForgotPasswordClick,
+    showBusinessSetup,
+    handleBusinessSetupClose,
   } = authFunction();
+
+  useEffect(() => {
+    try {
+      const token = localStorage.getItem("userToken");
+      const businessId = localStorage.getItem("business_id");
+      if (token && businessId) {
+        navigate(listed.dashboard, { replace: true });
+      }
+    } catch (e) {}
+  }, [navigate]);
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
   const toggleConfirmPasswordVisibility = () =>
@@ -55,7 +72,6 @@ const Auth: React.FC = () => {
         )}
 
         <form className="flex flex-col gap-4" onSubmit={handleAuth}>
-          {/* Email Input */}
           <div>
             <label
               htmlFor="email"
@@ -74,7 +90,6 @@ const Auth: React.FC = () => {
             />
           </div>
 
-          {/* Password Input */}
           <div>
             <label
               htmlFor="password"
@@ -108,7 +123,6 @@ const Auth: React.FC = () => {
             )}
           </div>
 
-          {/* Confirm Password Input (only for register) */}
           {currentTab === "daftar" && (
             <div>
               <label
@@ -135,7 +149,6 @@ const Auth: React.FC = () => {
             </div>
           )}
 
-          {/* Submit Button */}
           <button
             type="submit"
             className="w-full bg-blue-600 text-white font-semibold p-3 mt-2 rounded-lg hover:bg-blue-700 transition duration-150 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
@@ -149,6 +162,11 @@ const Auth: React.FC = () => {
           </button>
         </form>
       </div>
+
+      <BusinessSetupModal
+        isOpen={showBusinessSetup}
+        onClose={handleBusinessSetupClose}
+      />
     </div>
   );
 };

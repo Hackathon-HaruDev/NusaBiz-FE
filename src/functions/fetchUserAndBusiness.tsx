@@ -3,7 +3,6 @@ export const fetchUserAndBusiness = async () => {
   try {
     token = localStorage.getItem("userToken");
   } catch (e) {
-    console.error("Storage access error:", e);
     throw new Error(
       "Tidak dapat mengakses storage. Pastikan cookie dan storage diizinkan."
     );
@@ -11,7 +10,6 @@ export const fetchUserAndBusiness = async () => {
   if (!token) throw new Error("User belum login.");
 
   try {
-    // --- FETCH USER ---
     const userRes = await fetch(`${import.meta.env.VITE_BASE_URL}/users/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -25,7 +23,6 @@ export const fetchUserAndBusiness = async () => {
 
     const user = userData.data;
 
-    // --- FETCH BUSINESS LIST ---
     const bizRes = await fetch(`${import.meta.env.VITE_BASE_URL}/businesses`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -37,11 +34,10 @@ export const fetchUserAndBusiness = async () => {
       throw new Error(bizData.error?.message || "Gagal mengambil business");
     }
 
-    const businesses = bizData.data; // array bisnis
+    const businesses = bizData.data;
 
     return { user, businesses };
   } catch (err: any) {
-    console.error("Fetch error:", err.message);
     throw err;
   }
 };

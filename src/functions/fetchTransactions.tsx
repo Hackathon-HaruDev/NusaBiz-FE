@@ -3,7 +3,6 @@ export const fetchTransactions = async (businessId: number) => {
   try {
     token = localStorage.getItem("userToken");
   } catch (e) {
-    console.error("Storage access error:", e);
     return [];
   }
 
@@ -24,10 +23,8 @@ export const fetchTransactions = async (businessId: number) => {
       throw new Error(result.error?.message || "Failed fetching transactions");
     }
 
-    // FIX DI SINI ❗❗❗
     return result.data.transactions || [];
   } catch (err) {
-    console.error("Fetch transaksi error:", err);
     return [];
   }
 };

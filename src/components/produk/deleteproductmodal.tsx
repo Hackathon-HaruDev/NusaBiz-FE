@@ -60,7 +60,6 @@ const DeleteProductModal: React.FC<DeleteProductModalProps> = ({
 
       handleClose();
     } catch (error: any) {
-      console.error("Error deleting product:", error);
       showToast(error.message || "Gagal menghapus produk", "error");
     } finally {
       setIsDeleting(false);

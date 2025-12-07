@@ -82,7 +82,6 @@ const ProdukCard: React.FC<ProdukCardProps> = ({ data, onEdit, onDelete }) => {
         // Update original stock ref on success
         originalStockRef.current = newStock;
       } catch (error: any) {
-        console.error("Error adjusting stock:", error);
         // Rollback on error
         setCurrentStock(originalStockRef.current);
         setInputValue(originalStockRef.current.toString());

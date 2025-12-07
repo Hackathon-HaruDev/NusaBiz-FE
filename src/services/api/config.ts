@@ -1,14 +1,11 @@
 import axios from "axios";
 
-// Helper function to safely access localStorage
 const getStorageItem = (key: string): string | null => {
   try {
     if (typeof window !== "undefined" && window.localStorage) {
       return localStorage.getItem(key);
     }
-  } catch (e) {
-    console.warn("Storage access error:", e);
-  }
+  } catch (e) {}
   return null;
 };
 
@@ -17,9 +14,7 @@ const removeStorageItem = (key: string): void => {
     if (typeof window !== "undefined" && window.localStorage) {
       localStorage.removeItem(key);
     }
-  } catch (e) {
-    console.warn("Storage removal error:", e);
-  }
+  } catch (e) {}
 };
 
 const api = axios.create({
