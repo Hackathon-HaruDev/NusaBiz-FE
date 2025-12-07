@@ -7,7 +7,7 @@ interface props{
 }
 
 const ProdukCard:React.FC<props> = ({data}) => {
-    const percentage = (data.stok / data.total_stok) * 100
+    const percentage = (data.current_stock / data.base_stock) * 100
     return(
         <div className="flex flex-col gap-2 p-5 border border-[#e5e5e5] rounded-lg hover:scale-102 transition-all cursor-pointer">
             <div className="flex flex-row gap-3">
@@ -18,7 +18,7 @@ const ProdukCard:React.FC<props> = ({data}) => {
 
                 <div className="flex flex-col flex-1">
                     <p>{data.name}</p>
-                    <p>{data.current_stock}/{data.current_stock} Stock</p>
+                    <p>{data.current_stock}/{data.base_stock} Stock</p>
 
                     <div className="bg-white border w-full h-2 rounded">
                         <div
