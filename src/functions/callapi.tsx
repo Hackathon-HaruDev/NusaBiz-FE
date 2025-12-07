@@ -1,24 +1,27 @@
-export const APICall = async (endpoint: string, method: string = 'GET', data: any = null) => {
+export const APICall = async (endpoint: string, method: string = 'GET', data: any = null, isFormData: boolean = false) => {
     const token = localStorage.getItem('userToken');
     if (!token && endpoint !== '/auth/login' && endpoint !== '/auth/register') {
         throw new Error('Autentikasi diperlukan. Token hilang.');
     }
 
-    const headers: HeadersInit = {
-        'Content-Type': 'application/json',
+    const headers: HeadersInit = {};
+    const config: RequestInit = {
+        method: method,
     };
 
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const config: RequestInit = {
-        method: method,
-        headers: headers,
-    };
-
-    if (data && method !== 'GET' && method !== 'HEAD') {
-        config.body = JSON.stringify(data);
+    if (isFormData) {
+        config.body = data;
+        config.headers = headers; 
+    } else {
+        headers['Content-Type'] = 'application/json';
+        config.headers = headers;
+        if (data && method !== 'GET' && method !== 'HEAD') {
+            config.body = JSON.stringify(data);
+        }
     }
 
     try {
@@ -26,7 +29,6 @@ export const APICall = async (endpoint: string, method: string = 'GET', data: an
         const result = await response.json();
         
         if (!response.ok || !result.success) {
-            // Melemparkan pesan error yang diterima dari API
             const errorMessage = result.error?.message || `API Error: ${response.statusText}`;
             throw new Error(errorMessage);
         }
