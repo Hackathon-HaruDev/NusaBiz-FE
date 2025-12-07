@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { Funnel, Search, Download, Plus, Trash2, Pencil } from "lucide-react";
+import * as XLSX from "xlsx";
 import AddTransactionModal from "./addtransactionmodal";
 import FilterModal, { type FilterValues } from "./filtermodal";
 import EditTransactionModal from "./edittransactionmodal";
@@ -127,6 +128,55 @@ const Table: React.FC<TableProps> = ({
     }
   };
 
+  const handleExportExcel = () => {
+    if (transactions.length === 0) {
+      alert("Tidak ada data untuk diexport");
+      return;
+    }
+
+    // Prepare data for Excel
+    const excelData = transactions.map((transaction) => ({
+      Tanggal: formatDate(transaction.transaction_date),
+      "Tipe Transaksi": getTransactionTypeLabel(transaction.type),
+      Kategori: transaction.category || "-",
+      Jumlah: transaction.amount,
+      "Jumlah (Format)": formatTransactionAmount(
+        transaction.amount,
+        transaction.type
+      ),
+      Deskripsi: transaction.description || "-",
+    }));
+
+    // Create worksheet
+    const ws = XLSX.utils.json_to_sheet(excelData);
+
+    // Set column widths
+    const colWidths = [
+      { wch: 15 }, // Tanggal
+      { wch: 15 }, // Tipe Transaksi
+      { wch: 20 }, // Kategori
+      { wch: 15 }, // Jumlah
+      { wch: 20 }, // Jumlah (Format)
+      { wch: 40 }, // Deskripsi
+    ];
+    ws["!cols"] = colWidths;
+
+    // Create workbook
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Transaksi");
+
+    // Generate filename with current date
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}-${String(now.getDate()).padStart(2, "0")}`;
+    const filename = `Transaksi_${dateStr}.xlsx`;
+
+    // Download file
+    XLSX.writeFile(wb, filename);
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-3 sm:p-6">
       <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
@@ -158,7 +208,11 @@ const Table: React.FC<TableProps> = ({
           <Funnel className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
         </button>
 
-        <button className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+        <button
+          className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          onClick={handleExportExcel}
+          title="Download Excel"
+        >
           <Download className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
         </button>
 
