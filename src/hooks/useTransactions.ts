@@ -1,8 +1,3 @@
-/**
- * useTransactions Hook
- * Custom React hook for managing transaction data
- */
-
 import { useState, useEffect, useCallback } from "react";
 import * as transactionService from "../services/api/transaction.service";
 import * as businessService from "../services/api/business.service";
@@ -55,7 +50,6 @@ export const useTransactions = (
     hasMore: false,
   });
 
-  // Fetch transactions with filters
   const fetchTransactions = useCallback(
     async (filters?: TransactionFilters) => {
       setLoading(true);
@@ -66,7 +60,6 @@ export const useTransactions = (
         setPagination(data.pagination);
       } catch (err: any) {
         setError(err.response?.data?.message || "Failed to fetch transactions");
-        console.error("Error fetching transactions:", err);
       } finally {
         setLoading(false);
       }
@@ -74,7 +67,6 @@ export const useTransactions = (
     []
   );
 
-  // Fetch transaction totals (Switched to use getBalanceSummary for current_balance)
   const fetchTotals = useCallback(
     async (dateRange?: { startDate: string; endDate: string }) => {
       try {
@@ -83,29 +75,22 @@ export const useTransactions = (
 
         const businessId = parseInt(businessIdStr, 10);
 
-        // Uses business service to get real current balance
         const data = await businessService.getBalanceSummary(
           businessId,
           dateRange
         );
 
-        // Map BalanceSummary to TransactionTotals structure
-        // 'net' property is used for UI "Saldo" card, so we map 'currentBalance' to it.
         setTotals({
           income: data.totalIncome,
           expense: data.totalExpense,
-          net: data.currentBalance, // Mapping currentBalance to net for display purposes
+          net: data.currentBalance,
           dateRange: data.dateRange,
         });
-      } catch (err: any) {
-        console.error("Error fetching totals:", err);
-        // Don't set error for totals to avoid blocking the UI
-      }
+      } catch (err: any) {}
     },
     []
   );
 
-  // Create new transaction
   const createTransaction = useCallback(
     async (data: CreateTransactionDTO): Promise<Transaction | null> => {
       setLoading(true);
@@ -116,7 +101,6 @@ export const useTransactions = (
         return newTransaction;
       } catch (err: any) {
         setError(err.response?.data?.message || "Failed to create transaction");
-        console.error("Error creating transaction:", err);
         return null;
       } finally {
         setLoading(false);
@@ -125,7 +109,6 @@ export const useTransactions = (
     []
   );
 
-  // Update existing transaction
   const updateTransaction = useCallback(
     async (
       id: number,
@@ -139,7 +122,6 @@ export const useTransactions = (
         return updated;
       } catch (err: any) {
         setError(err.response?.data?.message || "Failed to update transaction");
-        console.error("Error updating transaction:", err);
         return null;
       } finally {
         setLoading(false);
@@ -148,7 +130,6 @@ export const useTransactions = (
     []
   );
 
-  // Delete transaction
   const deleteTransaction = useCallback(
     async (id: number): Promise<boolean> => {
       setLoading(true);
@@ -159,7 +140,6 @@ export const useTransactions = (
         return true;
       } catch (err: any) {
         setError(err.response?.data?.message || "Failed to delete transaction");
-        console.error("Error deleting transaction:", err);
         return false;
       } finally {
         setLoading(false);
@@ -168,14 +148,10 @@ export const useTransactions = (
     []
   );
 
-  // Refresh all data
   const refreshData = useCallback(async () => {
-    // Need to pass initialFilters or current filters if stored state
-    // For now using initialFilters passed to hook
     await Promise.all([fetchTransactions(initialFilters), fetchTotals()]);
   }, [fetchTransactions, fetchTotals, initialFilters]);
 
-  // Initial data fetch
   useEffect(() => {
     refreshData();
   }, []);

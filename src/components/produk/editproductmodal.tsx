@@ -201,7 +201,6 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
 
       handleClose();
     } catch (error: any) {
-      console.error("Error updating product:", error);
       showToast(error.message || "Gagal memperbarui produk", "error");
     } finally {
       setIsSubmitting(false);

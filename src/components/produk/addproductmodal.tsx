@@ -184,7 +184,6 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
       // Close modal
       handleClose();
     } catch (error: any) {
-      console.error("Error creating product:", error);
       showToast(error.message || "Gagal menambahkan produk", "error");
     } finally {
       setIsSubmitting(false);
