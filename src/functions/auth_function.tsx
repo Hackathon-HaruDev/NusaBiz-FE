@@ -21,6 +21,8 @@ export const authFunction = () => {
     string | null
   >(null);
 
+  const [showBusinessSetup, setShowBusinessSetup] = useState(false);
+
   const navigate = useNavigate();
 
   const handleTabChange = (tab: AuthOption) => {
@@ -31,6 +33,19 @@ export const authFunction = () => {
     setError(null);
     setForgotPasswordMessage(null);
     setIsLoading(false);
+  };
+
+  const checkUserHasBusiness = async (): Promise<boolean> => {
+    try {
+      const businesses = await APICall("/businesses");
+      if (businesses && businesses.length > 0) {
+        localStorage.setItem("business_id", businesses[0].id.toString());
+        return true;
+      }
+      return false;
+    } catch {
+      return false;
+    }
   };
 
   const registerUser = async () => {
@@ -46,11 +61,9 @@ export const authFunction = () => {
       localStorage.setItem("userToken", token);
       localStorage.setItem("access_token", token);
 
-      // Navigate to dashboard after successful registration
-      navigate(listed.dashboard);
+      setShowBusinessSetup(true);
       setError(null);
     } catch (err: any) {
-      console.error("Register Error:", err.message);
       setError(err.message || "Terjadi kesalahan jaringan.");
     }
   };
@@ -63,10 +76,14 @@ export const authFunction = () => {
       localStorage.setItem("userToken", token);
       localStorage.setItem("access_token", token);
 
-      navigate(listed.dashboard);
+      const hasBusiness = await checkUserHasBusiness();
+      if (hasBusiness) {
+        navigate(listed.dashboard);
+      } else {
+        setShowBusinessSetup(true);
+      }
       setError(null);
     } catch (err: any) {
-      console.error("Login Error:", err.message);
       setError(err.message || "Terjadi kesalahan jaringan.");
     }
   };
@@ -83,7 +100,6 @@ export const authFunction = () => {
         "Jika email Anda terdaftar, tautan pemulihan sandi telah dikirim ke kotak masuk Anda."
       );
     } catch (err: any) {
-      console.error("Forgot Password API Error:", err.message);
       setForgotPasswordMessage(
         "Jika email Anda terdaftar, tautan pemulihan sandi telah dikirim ke kotak masuk Anda."
       );
@@ -119,8 +135,11 @@ export const authFunction = () => {
     handleForgotPassword(email);
   };
 
+  const handleBusinessSetupClose = () => {
+    setShowBusinessSetup(false);
+  };
+
   return {
-    // State
     currentTab,
     email,
     password,
@@ -129,8 +148,6 @@ export const authFunction = () => {
     showConfirmPassword,
     isLoading,
     error,
-
-    // Handlers
     handleTabChange,
     handleAuth,
     setEmail,
@@ -138,9 +155,10 @@ export const authFunction = () => {
     setConfirmPassword,
     setShowPassword,
     setShowConfirmPassword,
-
     forgotPasswordMessage,
     handleForgotPassword,
     handleForgotPasswordClick,
+    showBusinessSetup,
+    handleBusinessSetupClose,
   };
 };

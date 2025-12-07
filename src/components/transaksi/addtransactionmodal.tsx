@@ -55,7 +55,6 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
       const response = await getProducts();
       setProducts(response.products);
     } catch (error) {
-      console.error("Failed to fetch products:", error);
       setAlertState({
         type: "error",
         message: "Gagal memuat daftar produk. Silakan coba lagi.",
@@ -154,7 +153,6 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
           description: description || undefined,
         };
 
-        console.log("📤 Submitting sale:", saleData);
         await recordSale(saleData);
       } else {
         const typeMapping: { [key: string]: TransactionType } = {
@@ -169,14 +167,11 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
           description: description || undefined,
         };
 
-        console.log("📤 Submitting transaction:", transactionData);
         await createTransaction(transactionData);
       }
 
-      console.log("✅ Transaction created successfully");
       return true;
     } catch (error: any) {
-      console.error("❌ Failed to create transaction:", error);
       throw error;
     }
   };

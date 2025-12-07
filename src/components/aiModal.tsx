@@ -59,9 +59,7 @@ const AiModal: React.FC<AiModalProps> = ({ isOpen, onClose }) => {
     try {
       const chats = await aiService.getAllChats();
       setChatList(chats);
-    } catch (error) {
-      console.error("Failed to load chat list:", error);
-    }
+    } catch (error) {}
   };
 
   const handleClose = () => {
