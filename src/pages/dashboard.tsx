@@ -1,33 +1,20 @@
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  LayoutDashboardIcon,
-} from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import React, { useState } from "react";
 import Card from "../components/dashboard/Card";
-import Riwayat from "../components/dashboard/riwayat";
 import AiButton from "../components/aiButton";
 import Chart from "react-apexcharts";
+import { useDashboard } from "../hooks/useDashboard";
+import { TransactionHistory } from "../components/dashboard/TransactionHistory";
+import { getTodayOmzet, getYesterdayOmzet } from "../helpers/Omzet";
+import { getLastMonthSaldo } from "../helpers/lastMonthSaldo";
 import AiModal from "../components/aiModal";
 
-const Dashboard: React.FC = () => {
+const Dashboard:React.FC = () => {
+  const { user, activeBusiness, transactions,loading } = useDashboard();
+  const omzetToday = getTodayOmzet(transactions);
+  const omzetYesterday = getYesterdayOmzet(transactions);
+  const lastMonthSaldo = getLastMonthSaldo(transactions);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const data_static = [
-    {
-      tipe: "Pemasukan",
-      kategori: "Penjualan",
-      nominal: 250000,
-      deskripsi: "Penjualan Produk A",
-      waktu: "Hari ini, 09.12",
-    },
-    {
-      tipe: "Pengeluaran",
-      kategori: "Operasional",
-      nominal: 75000,
-      deskripsi: "Beli Kertas Struk",
-      waktu: "Hari ini, 08.22",
-    },
-  ];
 
   const state = {
     options: {
@@ -89,50 +76,38 @@ const Dashboard: React.FC = () => {
     ],
   };
 
-  return (
-    <div className="p-5 flex flex-col gap-5">
-      <p className="text-2xl font-bold">Dashboard</p>
-      <main className="flex flex-row h-fit w-full">
-        <div className="flex flex-col px-3 gap-4 w-full">
-          <div className="flex flex-row gap-4">
-            <Card title="Saldo" />
-            <Card title="Omzet" />
-          </div>
-          <div className="border border-[#e5e5e5] flex flex-col h-full p-1">
-            <div className="flex flex-row justify-between ">
-              <p className="text-2xl">Performa Data Penjualan: </p>
-              <span className="flex flex-row items-center gap-2">
-                <ChevronLeftIcon />
-                <p>2025</p>
-                <ChevronRightIcon />
-              </span>
-            </div>
-            <div className="w-full">
-              <div className="w-full p-5">
-                <Chart
-                  options={state.options}
-                  series={state.series}
-                  type="bar"
-                  height={480}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          className="flex flex-col w-[30%] border border-[#e5e5e5]"
-          style={{ height: "calc(100vh - 120px)" }}
-        >
-          <p className="w-full text-center p-3 text-2xl border-b border-[#e5e5e5]">
-            Riwayat Transaksi
-          </p>
-          <div className="flex flex-col overflow-y-auto flex-1">
-            {data_static.slice(0, 7).map((data) => (
-              <Riwayat data={data} />
-            ))}
-          </div>
-        </div>
-      </main>
+    return(
+        <div className="p-5 flex flex-col gap-5">
+            <p className="text-2xl font-bold">Dashboard {activeBusiness?.business_name}</p>
+            <main className="flex flex-row h-fit w-full">
+                <div className="flex flex-col px-3 gap-4 w-full">
+                    <div className="flex flex-row gap-4">
+                        <Card current={activeBusiness?.current_balance || 0} past={lastMonthSaldo} title="Saldo" loading={loading}/>
+                        <Card title="Omzet" current={omzetToday} past={omzetYesterday} loading={loading}/>
+                    </div>
+                    <div className="border border-[#e5e5e5] flex flex-col h-full p-1">
+                        <div className="flex flex-row justify-between ">
+                            <p className="text-2xl">Performa Data Penjualan: </p>
+                            <span className="flex flex-row items-center gap-2">
+                                <ChevronLeftIcon />
+                                <p>2025</p>
+                                <ChevronRightIcon />
+                            </span>
+                        </div>
+                        <div className="w-full">
+                            <div className="w-full p-5">
+                              <Chart
+                                  options={state.options}
+                                  series={state.series}
+                                  type="bar"
+                                  height={480}
+                              />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <TransactionHistory transactions={transactions} loading={loading} />
+              </main>
       <AiButton onClick={() => setIsModalOpen(true)} />
       <AiModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>

@@ -1,5 +1,6 @@
 import { DollarSignIcon, ShoppingBagIcon } from "lucide-react";
 import React from "react";
+import { formatNumber } from "../../helpers/formatNumber";
 
 interface props {
     data: any
@@ -17,7 +18,7 @@ const Riwayat:React.FC<props> = ({data}) => {
             <div className="flex flex-col w-full">
                 <div className="flex flex-row justify-between">
                     <p className="font-semibold">{data.kategori}</p>
-                    <p className={data.tipe === "Pemasukan" ? "text-[#35A042]" : "text-[#C63939]"}>Rp {data.nominal}</p>
+                    <p className={data.tipe === "Pemasukan" ? "text-[#35A042]" : "text-[#C63939]"}>Rp {formatNumber(data.nominal)}</p>
                 </div>
                 <p className="text-sm">{data.deskripsi}</p>
                 <p className="text-sm opacity-60">{data.waktu}</p>

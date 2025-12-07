@@ -6,17 +6,16 @@ import LandingPage from '../pages/landing';
 import Produk from '../pages/produk';
 import Transaksi from '../pages/transaksi';
 import Auth from '../pages/auth';
-import PasswordObscure from '../components/auth/obscure';
-import AuthToggle from '../components/auth/toggle';
+import AuthProtectLayout from '../components/AuthProtectLayout';
 import Profile from '../pages/profile';
 
 export const Router = createBrowserRouter([
     {
     path: '/',
     element: (
-        <>
+        <AuthProtectLayout>
             <Layout />
-        </>
+        </AuthProtectLayout>
     ),
     children: [
         {
