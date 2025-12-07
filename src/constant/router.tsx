@@ -5,6 +5,11 @@ import Dashboard from '../pages/dashboard';
 import LandingPage from '../pages/landing';
 import Produk from '../pages/produk';
 import Transaksi from '../pages/transaksi';
+import Auth from '../pages/auth';
+import PasswordObscure from '../components/auth/obscure';
+import AuthToggle from '../components/auth/toggle';
+import Profile from '../pages/profile';
+
 export const Router = createBrowserRouter([
     {
     path: '/',
@@ -32,7 +37,7 @@ export const Router = createBrowserRouter([
         },
         {
             path: listed.profile,
-            element: <div>Profile</div>
+            element: <Profile />
         }
     ],
     },
@@ -41,7 +46,7 @@ export const Router = createBrowserRouter([
         element: <LandingPage />
     },
     {
-        path: listed.signIn,
-        element: <div>Sign In</div>
+        path: listed.auth,
+        element: <Auth />
     }
 ])

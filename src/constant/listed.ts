@@ -1,9 +1,8 @@
 export const listed = {
-    signIn: '/SignIn',
+    auth: '/Authentication',
     landingPage: '/LandingPage',
-    dashboard: 'Dashboard',
+    dashboard: '/Dashboard',
     transaksi: '/Transaksi',
     produk: '/Produk',
     profile: '/Profil'
-
 };
