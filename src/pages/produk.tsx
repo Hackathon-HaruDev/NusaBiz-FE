@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ProdukCard from "../components/produk/card";
 import { PlusIcon } from "lucide-react";
 import AiButton from "../components/aiButton";
@@ -12,13 +12,21 @@ import DeleteProductModal from "../components/produk/deleteproductmodal";
 import type { Product } from "../types/product";
 
 const Produk: React.FC = () => {
-  const { activeBusiness, loading: dashboardLoading } = useDashboardContext();
-  const businessId = activeBusiness?.id || 0;
+  const [businessId, setBusinessId] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    const storedBusinessId = localStorage.getItem("business_id");
+    if (storedBusinessId) {
+      setBusinessId(parseInt(storedBusinessId, 10));
+    }
+  }, []);
+
   const {
     products,
     loading: productLoading,
     refetch,
   } = useProducts(businessId);
+
   const [sortby, setSortBy] = useState("stok-terbanyak");
   const sortedProducts = sortProducts(products, sortby);
 
@@ -57,7 +65,7 @@ const Produk: React.FC = () => {
     setSelectedProduct(null);
   };
 
-  if (dashboardLoading || productLoading) {
+  if (productLoading) {
     return (
       <div className="p-5 flex items-center justify-center h-64">
         <div className="flex flex-col items-center gap-3">

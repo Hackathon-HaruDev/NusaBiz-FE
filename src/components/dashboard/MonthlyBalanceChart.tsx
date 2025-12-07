@@ -1,15 +1,41 @@
 import Chart from "react-apexcharts";
 
 const months = [
-  "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
-  "Jul", "Agu", "Sep", "Okt", "Nov", "Des"
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "Mei",
+  "Jun",
+  "Jul",
+  "Agu",
+  "Sep",
+  "Okt",
+  "Nov",
+  "Des",
 ];
 
 export const MonthlyBalanceSplineChart = ({ series }: { series: any }) => {
   const options = {
     chart: {
       id: "spline-area-chart",
-      toolbar: { show: true }
+      toolbar: {
+        show: true,
+        tools: {
+          download: true,
+          selection: true,
+          zoom: true,
+          zoomin: true,
+          zoomout: true,
+          pan: true,
+          reset: true,
+        },
+      },
+      background: "transparent",
+    },
+
+    theme: {
+      mode: "dark" as const,
     },
 
     stroke: {
@@ -26,43 +52,56 @@ export const MonthlyBalanceSplineChart = ({ series }: { series: any }) => {
         opacityFrom: 0.5,
         opacityTo: 0.1,
         stops: [0, 90, 100],
-      }
+      },
     },
 
     dataLabels: { enabled: false },
 
+    grid: {
+      borderColor: "#374151",
+      strokeDashArray: 3,
+    },
+
     xaxis: {
       categories: months,
       labels: {
-        style: { colors: "#6b7280", fontSize: "13px" },
+        style: { colors: "#9CA3AF", fontSize: "13px" },
+      },
+      axisBorder: {
+        color: "#374151",
+      },
+      axisTicks: {
+        color: "#374151",
       },
     },
 
     yaxis: {
       labels: {
-        formatter: (val: { toLocaleString: () => any; }) => `Rp ${val.toLocaleString()}`,
-        style: { colors: "#6b7280" }
+        formatter: (val: { toLocaleString: () => any }) =>
+          `Rp ${val.toLocaleString()}`,
+        style: { colors: "#9CA3AF" },
       },
     },
 
     tooltip: {
+      theme: "dark",
+      style: {
+        fontSize: "12px",
+      },
       y: {
-        formatter: (val: { toLocaleString: () => any; }) => `Rp ${val.toLocaleString()}`
-      }
+        formatter: (val: { toLocaleString: () => any }) =>
+          `Rp ${val.toLocaleString()}`,
+      },
     },
 
     legend: {
       position: "bottom" as const,
-      horizontalAlign: "center" as const
-    }
+      horizontalAlign: "center" as const,
+      labels: {
+        colors: "#ffffff",
+      },
+    },
   };
 
-  return (
-    <Chart
-      options={options}
-      series={series}
-      type="area"
-      height={350}
-    />
-  );
+  return <Chart options={options} series={series} type="area" height={350} />;
 };
