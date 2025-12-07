@@ -8,7 +8,8 @@ const Auth: React.FC = () => {
         currentTab, handleTabChange, handleAuth, 
         email, setEmail, password, setPassword, confirmPassword, setConfirmPassword,
         showPassword, setShowPassword, showConfirmPassword, setShowConfirmPassword,
-        isLoading, error
+        isLoading, error, 
+        forgotPasswordMessage, handleForgotPassword, handleForgotPasswordClick
     } = authFunction();
 
     const togglePasswordVisibility = () => setShowPassword(!showPassword);
@@ -21,9 +22,6 @@ const Auth: React.FC = () => {
                 <AuthToggle activeTab={currentTab} onTabChange={handleTabChange} />
                 
                 <div className="flex flex-col items-center mb-6 px-8">
-                    {/* <div className="w-12 h-12 flex items-center justify-center rounded-full bg-white border border-gray-200 shadow-lg mb-2">
-                        <img src="https://placehold.co/400" alt="logo" className='rounded-full' />
-                    </div> */}
                     <p className="text-gray-800 font-semibold text-base mb-1">NusaBiz</p>
                     <p className="text-gray-500 text-xs text-center">Aplikasi Manajemen Bisnis Berbasis AI</p>
                 </div>
@@ -60,7 +58,13 @@ const Auth: React.FC = () => {
                             />
                         </div>
                         {currentTab === 'masuk' && (
-                            <a href="#" className="block text-right text-xs text-blue-500 mt-1 hover:text-blue-700 transition duration-150">lupa password</a>
+                            <a 
+                                href="#" 
+                                onClick={handleForgotPasswordClick}
+                                className="block text-right text-xs text-blue-500 mt-1 hover:text-blue-700 transition duration-150"
+                            >
+                                Lupa password?
+                            </a>
                         )}
                     </div>
                     

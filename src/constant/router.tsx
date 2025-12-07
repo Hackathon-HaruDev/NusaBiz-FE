@@ -7,6 +7,7 @@ import PasswordObscure from '../components/auth/obscure';
 import AuthToggle from '../components/auth/toggle';
 import profile from '../pages/profile';
 import Profile from '../pages/profile';
+import ResetPassword from '../pages/resetpassword';
 
 export const Router = createBrowserRouter([
     {
@@ -42,5 +43,9 @@ export const Router = createBrowserRouter([
     {
         path: listed.auth,
         element: <Auth />
+    },
+    {
+        path: listed.resetPassword,
+        element: <ResetPassword />
     }
 ])

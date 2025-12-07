@@ -17,6 +17,7 @@ export const authFunction = () => {
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [forgotPasswordMessage, setForgotPasswordMessage] = useState<string | null>(null);
 
     const navigate = useNavigate()
 
@@ -66,6 +67,25 @@ export const authFunction = () => {
             setError(err.message || 'Terjadi kesalahan jaringan.');
         }
     };
+
+    const handleForgotPassword = async (emailToReset: string) => {
+        setError(null);
+        setForgotPasswordMessage(null);
+        setIsLoading(true);
+        
+        try {
+            await APICall('/auth/forgot-password', 'POST', { email: emailToReset });
+            
+            setForgotPasswordMessage('Jika email Anda terdaftar, tautan pemulihan sandi telah dikirim ke kotak masuk Anda.');
+
+        } catch (err: any) {
+            console.error('Forgot Password API Error:', err.message);
+            setForgotPasswordMessage('Jika email Anda terdaftar, tautan pemulihan sandi telah dikirim ke kotak masuk Anda.');
+
+        } finally {
+            setIsLoading(false);
+        }
+    };
     
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -81,6 +101,19 @@ export const authFunction = () => {
         setIsLoading(false);
     };
 
+    const handleForgotPasswordClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        
+        if (isLoading) return;
+
+        if (!email) {
+            setError('Masukkan alamat email Anda terlebih dahulu di kolom Email.');
+            return;
+        }
+        
+        handleForgotPassword(email);
+    };
+
     return {
         // State
         currentTab, email, password, confirmPassword,
@@ -90,6 +123,8 @@ export const authFunction = () => {
         // Handlers
         handleTabChange, handleAuth,
         setEmail, setPassword, setConfirmPassword,
-        setShowPassword, setShowConfirmPassword
+        setShowPassword, setShowConfirmPassword,
+
+        forgotPasswordMessage,handleForgotPassword, handleForgotPasswordClick
     };
 }
