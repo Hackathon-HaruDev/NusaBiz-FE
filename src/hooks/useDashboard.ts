@@ -28,7 +28,6 @@ export const useDashboard = () => {
         }
 
       } catch (err: any) {
-        console.error(err);
         setError(err.message || "Something went wrong");
       } finally {
         setLoading(false);  // ⬅️ TANDAI LOADING SELESAI

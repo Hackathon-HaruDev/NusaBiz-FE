@@ -13,7 +13,6 @@ export const fetchTransactions = async (businessId: number) => {
     );
 
     const result = await res.json();
-    console.log("RAW RESULT:", result);
 
     if (!res.ok || !result.success) {
       throw new Error(result.error?.message || "Failed fetching transactions");
