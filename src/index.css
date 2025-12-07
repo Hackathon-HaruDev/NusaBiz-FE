@@ -1,31 +1,23 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
-:root{
-    --primary: #192335;
-    --secondary: #3D4C66;
-    color: black;
-    --font-karma: "Karma", serif;
-    background: #fff;
-    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+:root {
+  --primary: #192335;
+  --secondary: #3d4c66;
+  --bg-dark: #0f172a;
+  --bg-card: #1e293b;
+  color: white;
+  --font-karma: "Karma", serif;
+  background: #0f172a;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
 }
- /* font-family: var(--font-karma), serif; */
-/* Apply the custom font globally */
-/* ::-webkit-scrollbar {
-   
-    display: none;
-} */
-
 ::-webkit-scrollbar {
   display: none;
 }
 
-/* Hilangkan scrollbar di Firefox */
 * {
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none;
 }
-
-/* Hilangkan scrollbar di IE/Edge lama */
 * {
-  -ms-overflow-style: none; /* IE & Edge Legacy */
+  -ms-overflow-style: none;
 }

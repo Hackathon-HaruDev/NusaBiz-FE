@@ -1,15 +1,18 @@
-import AOS from "aos"
+import AOS from "aos";
 import "aos/dist/aos.css";
 import { RouterProvider } from "react-router-dom";
 import { Router } from "./constant/router";
 import Aos from "aos";
+import { ToastProvider } from "./context/ToastContext";
 
-Aos.init({
-  
-})
+Aos.init({});
 
 function App() {
-  return <RouterProvider router={Router} />;
+  return (
+    <ToastProvider>
+        <RouterProvider router={Router} />
+    </ToastProvider>
+  );
 }
 
-export default App
+export default App;

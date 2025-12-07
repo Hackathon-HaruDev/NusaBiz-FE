@@ -1,5 +1,6 @@
 export const listed = {
-    auth: '/Authentication',
+    auth: '/Auth',
+    resetPassword: '/ResetPassword',
     landingPage: '/LandingPage',
     dashboard: '/Dashboard',
     transaksi: '/Transaksi',

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Sidebar from "./sidebar";
 import Header from "./header";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
 export const Layout: React.FC = () => {
 
@@ -16,7 +16,7 @@ export const Layout: React.FC = () => {
                     <div className="h-full z-40 text-white">
                         <Sidebar isOpen={isSidebarOpen}/>
                     </div>
-                    <div className={`w-full h-full overflow-y-auto transition-all duration-300 ${isSidebarOpen && "pl-52"}`}>
+                    <div className={`w-full h-full overflow-y-auto transition-all duration-300 ${isSidebarOpen && "md:pl-52 pl-0"}`}>
                         <Outlet />
                     </div>
                 </div>

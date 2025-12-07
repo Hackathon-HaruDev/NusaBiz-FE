@@ -4,17 +4,19 @@ import { listed } from './listed';
 import Dashboard from '../pages/dashboard';
 import LandingPage from '../pages/landing';
 import Produk from '../pages/produk';
+import Transaksi from '../pages/transaksi';
 import Auth from '../pages/auth';
-import PasswordObscure from '../components/auth/obscure';
-import AuthToggle from '../components/auth/toggle';
+import AuthProtectLayout from '../components/AuthProtectLayout';
+import Profile from '../pages/profile';
+import ResetPassword from '../pages/resetpassword';
 
 export const Router = createBrowserRouter([
     {
     path: '/',
     element: (
-        <>
+        <AuthProtectLayout>
             <Layout />
-        </>
+        </AuthProtectLayout>
     ),
     children: [
         {
@@ -27,7 +29,7 @@ export const Router = createBrowserRouter([
         },
         {
             path: listed.transaksi,
-            element: <div>Test</div>
+            element: <Transaksi />
         },
         {
             path: listed.produk,
@@ -35,7 +37,7 @@ export const Router = createBrowserRouter([
         },
         {
             path: listed.profile,
-            element: <div>Profile</div>
+            element: <Profile />
         }
     ],
     },
@@ -46,5 +48,9 @@ export const Router = createBrowserRouter([
     {
         path: listed.auth,
         element: <Auth />
+    },
+    {
+        path: listed.resetPassword,
+        element: <ResetPassword />
     }
 ])
