@@ -9,8 +9,7 @@ export const useDashboard = () => {
   const [user, setUser] = useState<User | null>(null);
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);     // ⬅️ TAMBAH INI
-  const [error, setError] = useState<string | null>(null); // optional
+  const [loading, setLoading] = useState(true);     
 
   useEffect(() => {
     const load = async () => {
@@ -28,10 +27,9 @@ export const useDashboard = () => {
         }
 
       } catch (err: any) {
-        console.error(err);
-        setError(err.message || "Something went wrong");
+        
       } finally {
-        setLoading(false);  // ⬅️ TANDAI LOADING SELESAI
+        setLoading(false);
       }
     };
 
@@ -43,7 +41,6 @@ export const useDashboard = () => {
     businesses,
     activeBusiness: businesses[0],
     transactions,
-    loading,  // ⬅️ KEMBALIKAN
-    error     // optional
+    loading,      
   };
 };
