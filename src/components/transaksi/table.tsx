@@ -178,21 +178,21 @@ const Table: React.FC<TableProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-3 sm:p-6">
+    <div className="bg-[#1e293b] rounded-lg shadow-sm border border-gray-700 p-3 sm:p-6">
       <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
           <input
             type="text"
             placeholder="Cari..."
-            className="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm border border-gray-600 bg-[#0f172a] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-500"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
 
         <select
-          className="px-3 sm:px-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white min-w-[120px] sm:min-w-[180px]"
+          className="px-3 sm:px-4 py-2 text-sm border border-gray-600 bg-[#0f172a] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[120px] sm:min-w-[180px]"
           value={tipeFilter}
           onChange={(e) => setTipeFilter(e.target.value)}
         >
@@ -202,22 +202,22 @@ const Table: React.FC<TableProps> = ({
         </select>
 
         <button
-          className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          className="p-2 border border-gray-600 rounded-lg hover:bg-gray-700 transition-colors"
           onClick={() => setIsFilterModalOpen(true)}
         >
-          <Funnel className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+          <Funnel className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
         </button>
 
         <button
-          className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          className="p-2 border border-gray-600 rounded-lg hover:bg-gray-700 transition-colors"
           onClick={handleExportExcel}
           title="Download Excel"
         >
-          <Download className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+          <Download className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
         </button>
 
         <button
-          className="px-3 sm:px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+          className="px-3 sm:px-4 py-2 bg-[#0f172a] border border-gray-600 rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2 text-white"
           onClick={() => {
             setIsAddTransactionModalOpen(true);
           }}
@@ -239,8 +239,8 @@ const Table: React.FC<TableProps> = ({
           }}
           className={`p-2 border rounded-lg transition-colors ${
             selectedRows.length !== 1
-              ? "border-gray-200 bg-gray-100 cursor-not-allowed opacity-50"
-              : "border-gray-200 hover:bg-blue-50 hover:border-blue-300"
+              ? "border-gray-600 bg-gray-800 cursor-not-allowed opacity-50"
+              : "border-gray-600 hover:bg-blue-900/30 hover:border-blue-500"
           }`}
         >
           <Pencil
@@ -255,8 +255,8 @@ const Table: React.FC<TableProps> = ({
           onClick={() => setIsDeleteModalOpen(true)}
           className={`p-2 border rounded-lg transition-colors ${
             selectedRows.length === 0
-              ? "border-gray-200 bg-gray-100 cursor-not-allowed opacity-50"
-              : "border-gray-200 hover:bg-red-50 hover:border-red-300"
+              ? "border-gray-600 bg-gray-800 cursor-not-allowed opacity-50"
+              : "border-gray-600 hover:bg-red-900/30 hover:border-red-500"
           }`}
         >
           <Trash2
@@ -270,11 +270,11 @@ const Table: React.FC<TableProps> = ({
       <div className="overflow-x-auto -mx-3 sm:mx-0">
         <table className="w-full min-w-[640px]">
           <thead>
-            <tr className="border-b border-gray-200">
+            <tr className="border-b border-gray-600">
               <th className="text-left py-3 px-4">
                 <input
                   type="checkbox"
-                  className="w-4 h-4 rounded border-gray-300 cursor-pointer"
+                  className="w-4 h-4 rounded border-gray-500 cursor-pointer"
                   checked={
                     transactions.length > 0 &&
                     selectedRows.length === transactions.length
@@ -282,19 +282,19 @@ const Table: React.FC<TableProps> = ({
                   onChange={toggleSelectAll}
                 />
               </th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-300">
                 Tanggal
               </th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-300">
                 Tipe Transaksi
               </th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-300">
                 Kategori
               </th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-300">
                 Jumlah
               </th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-300">
                 Deskripsi
               </th>
             </tr>
@@ -302,30 +302,30 @@ const Table: React.FC<TableProps> = ({
           <tbody>
             {loading ? (
               Array.from({ length: 3 }).map((_, idx) => (
-                <tr key={idx} className="border-b border-gray-100">
+                <tr key={idx} className="border-b border-gray-700">
                   <td className="py-3 px-4">
-                    <div className="w-4 h-4 bg-gray-200 animate-pulse rounded"></div>
+                    <div className="w-4 h-4 bg-gray-600 animate-pulse rounded"></div>
                   </td>
                   <td className="py-3 px-4">
-                    <div className="h-4 bg-gray-200 animate-pulse rounded"></div>
+                    <div className="h-4 bg-gray-600 animate-pulse rounded"></div>
                   </td>
                   <td className="py-3 px-4">
-                    <div className="h-6 w-24 bg-gray-200 animate-pulse rounded-full"></div>
+                    <div className="h-6 w-24 bg-gray-600 animate-pulse rounded-full"></div>
                   </td>
                   <td className="py-3 px-4">
-                    <div className="h-4 bg-gray-200 animate-pulse rounded"></div>
+                    <div className="h-4 bg-gray-600 animate-pulse rounded"></div>
                   </td>
                   <td className="py-3 px-4">
-                    <div className="h-4 bg-gray-200 animate-pulse rounded"></div>
+                    <div className="h-4 bg-gray-600 animate-pulse rounded"></div>
                   </td>
                   <td className="py-3 px-4">
-                    <div className="h-4 bg-gray-200 animate-pulse rounded"></div>
+                    <div className="h-4 bg-gray-600 animate-pulse rounded"></div>
                   </td>
                 </tr>
               ))
             ) : transactions.length === 0 ? (
               <tr>
-                <td colSpan={6} className="py-8 text-center text-gray-500">
+                <td colSpan={6} className="py-8 text-center text-gray-400">
                   Tidak ada transaksi
                 </td>
               </tr>
@@ -333,17 +333,17 @@ const Table: React.FC<TableProps> = ({
               transactions.map((transaction) => (
                 <tr
                   key={transaction.id}
-                  className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                  className="border-b border-gray-700 hover:bg-gray-700/50 transition-colors"
                 >
                   <td className="py-3 px-4">
                     <input
                       type="checkbox"
-                      className="w-4 h-4 rounded border-gray-300 cursor-pointer"
+                      className="w-4 h-4 rounded border-gray-500 cursor-pointer"
                       checked={selectedRows.includes(transaction.id)}
                       onChange={() => toggleRowSelection(transaction.id)}
                     />
                   </td>
-                  <td className="py-3 px-4 text-sm text-gray-900">
+                  <td className="py-3 px-4 text-sm text-gray-200">
                     {formatDate(transaction.transaction_date)}
                   </td>
                   <td className="py-3 px-4">
@@ -355,7 +355,7 @@ const Table: React.FC<TableProps> = ({
                       {getTransactionTypeLabel(transaction.type)}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-sm text-gray-900">
+                  <td className="py-3 px-4 text-sm text-gray-200">
                     {transaction.category || "-"}
                   </td>
                   <td
@@ -370,7 +370,7 @@ const Table: React.FC<TableProps> = ({
                       transaction.type
                     )}
                   </td>
-                  <td className="py-3 px-4 text-sm text-gray-900">
+                  <td className="py-3 px-4 text-sm text-gray-200">
                     {transaction.description || "-"}
                   </td>
                 </tr>

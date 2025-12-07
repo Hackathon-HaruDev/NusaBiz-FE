@@ -81,8 +81,8 @@ export const getTransactionTypeColor = (type: TransactionType): string => {
  */
 export const getTransactionTypeBadgeColor = (type: TransactionType): string => {
   return type === "Income"
-    ? "bg-green-100 text-green-700"
-    : "bg-red-100 text-red-700";
+    ? "bg-emerald-600 text-white"
+    : "bg-red-600 text-white";
 };
 
 /**

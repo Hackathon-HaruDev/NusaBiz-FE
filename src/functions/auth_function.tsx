@@ -14,10 +14,12 @@ export const authFunction = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showBusinessSetup, setShowBusinessSetup] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [forgotPasswordMessage, setForgotPasswordMessage] = useState<
+    string | null
+  >(null);
 
   const navigate = useNavigate();
 
@@ -27,8 +29,8 @@ export const authFunction = () => {
     setPassword("");
     setConfirmPassword("");
     setError(null);
+    setForgotPasswordMessage(null);
     setIsLoading(false);
-    console.log(`Tab changed to: ${tab}`);
   };
 
   const registerUser = async () => {
@@ -38,18 +40,14 @@ export const authFunction = () => {
     }
 
     try {
-      const data = await APICall("/auth/register", "POST", {
-        email,
-        password,
-      });
+      const data = await APICall("/auth/register", "POST", { email, password });
 
-      // Save token to localStorage
       const token = data.token;
       localStorage.setItem("userToken", token);
-      localStorage.setItem("access_token", token); // For API interceptor
+      localStorage.setItem("access_token", token);
 
-      // Show business setup modal instead of login tab
-      setShowBusinessSetup(true);
+      // Navigate to dashboard after successful registration
+      navigate(listed.dashboard);
       setError(null);
     } catch (err: any) {
       console.error("Register Error:", err.message);
@@ -59,56 +57,38 @@ export const authFunction = () => {
 
   const loginUser = async () => {
     try {
-      console.log("🔑 Starting login...");
       const data = await APICall("/auth/login", "POST", { email, password });
 
-      console.log("📦 Login response data:", data);
-
       const token = data.token;
-      console.log("🎫 Token extracted:", token ? "EXISTS" : "NULL");
-
-      // Save to localStorage
-      localStorage.setItem("access_token", token);
       localStorage.setItem("userToken", token);
+      localStorage.setItem("access_token", token);
 
-      // Verify saved
-      const savedToken = localStorage.getItem("access_token");
-      console.log(
-        "✅ Token saved to localStorage:",
-        savedToken ? "SUCCESS" : "FAILED"
-      );
-
-      // FETCH USER BUSINESSES
-      try {
-        console.log("🏢 Fetching user businesses...");
-        const businessesData = await APICall("/businesses", "GET");
-        console.log("🏢 User businesses:", businessesData);
-
-        if (businessesData && businessesData.length > 0) {
-          // User has existing businesses - use the first one for now
-          // In a real app, we might check for a 'default' or 'last_active' flag
-          const firstBusiness = businessesData[0];
-          localStorage.setItem("business_id", firstBusiness.id.toString());
-          console.log("💾 Business ID restored:", firstBusiness.id);
-
-          navigate(listed.dashboard);
-        } else {
-          // User has no businesses yet - prompt setup
-          console.log("⚠️ No businesses found for user. Prompting setup.");
-          setShowBusinessSetup(true);
-        }
-      } catch (bizErr) {
-        console.error("❌ Failed to fetch businesses:", bizErr);
-        // Fallback: If fetch fails but login succeeded, go to dashboard.
-        // The dashboard might show errors, but at least user is logged in.
-        // Or prompt setup if it seems like a new user issue.
-        navigate(listed.dashboard);
-      }
-
+      navigate(listed.dashboard);
       setError(null);
     } catch (err: any) {
-      console.error("❌ Login Error:", err.message);
+      console.error("Login Error:", err.message);
       setError(err.message || "Terjadi kesalahan jaringan.");
+    }
+  };
+
+  const handleForgotPassword = async (emailToReset: string) => {
+    setError(null);
+    setForgotPasswordMessage(null);
+    setIsLoading(true);
+
+    try {
+      await APICall("/auth/forgot-password", "POST", { email: emailToReset });
+
+      setForgotPasswordMessage(
+        "Jika email Anda terdaftar, tautan pemulihan sandi telah dikirim ke kotak masuk Anda."
+      );
+    } catch (err: any) {
+      console.error("Forgot Password API Error:", err.message);
+      setForgotPasswordMessage(
+        "Jika email Anda terdaftar, tautan pemulihan sandi telah dikirim ke kotak masuk Anda."
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -126,6 +106,19 @@ export const authFunction = () => {
     setIsLoading(false);
   };
 
+  const handleForgotPasswordClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    if (isLoading) return;
+
+    if (!email) {
+      setError("Masukkan alamat email Anda terlebih dahulu di kolom Email.");
+      return;
+    }
+
+    handleForgotPassword(email);
+  };
+
   return {
     // State
     currentTab,
@@ -136,7 +129,6 @@ export const authFunction = () => {
     showConfirmPassword,
     isLoading,
     error,
-    showBusinessSetup,
 
     // Handlers
     handleTabChange,
@@ -146,6 +138,9 @@ export const authFunction = () => {
     setConfirmPassword,
     setShowPassword,
     setShowConfirmPassword,
-    setShowBusinessSetup,
+
+    forgotPasswordMessage,
+    handleForgotPassword,
+    handleForgotPasswordClick,
   };
 };

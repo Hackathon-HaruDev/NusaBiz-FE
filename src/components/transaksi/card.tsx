@@ -27,13 +27,13 @@ const Card: React.FC<CardProps> = ({
   };
 
   return (
-    <div className="card bg-white shadow-lg rounded-lg border border-gray-100">
+    <div className="card bg-[#1e293b] shadow-lg rounded-lg border border-gray-700">
       <div className="card-body p-4 sm:p-6">
-        <h2 className="card-title text-xs sm:text-sm font-semibold text-gray-700">
+        <h2 className="card-title text-xs sm:text-sm font-semibold text-gray-300">
           {title}
         </h2>
         {loading ? (
-          <div className="h-9 sm:h-10 bg-gray-200 animate-pulse rounded my-2"></div>
+          <div className="h-9 sm:h-10 bg-gray-700 animate-pulse rounded my-2"></div>
         ) : (
           <p className={`text-2xl sm:text-3xl font-bold my-2 ${color}`}>
             {prefix}Rp {formatCurrency(amount)}
