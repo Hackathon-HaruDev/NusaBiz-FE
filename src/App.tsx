@@ -1,4 +1,3 @@
-import AOS from "aos";
 import "aos/dist/aos.css";
 import { RouterProvider } from "react-router-dom";
 import { Router } from "./constant/router";
@@ -10,7 +9,7 @@ Aos.init({});
 function App() {
   return (
     <ToastProvider>
-        <RouterProvider router={Router} />
+      <RouterProvider router={Router} />
     </ToastProvider>
   );
 }

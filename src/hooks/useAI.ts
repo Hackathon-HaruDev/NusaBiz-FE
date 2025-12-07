@@ -11,8 +11,6 @@ import type {
   CostRecommendations,
   SalesRecommendations,
   StockForecasts,
-  ChatInteraction,
-  ChatHistory,
   Message,
 } from "../types/ai.types";
 

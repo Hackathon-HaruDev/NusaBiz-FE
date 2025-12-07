@@ -9,10 +9,8 @@ import * as transactionService from "../../services/api/transaction.service";
 import {
   formatDate,
   getTransactionTypeLabel,
-  getStatusLabel,
   formatTransactionAmount,
   getTransactionTypeBadgeColor,
-  getStatusBadgeColor,
   filterTransactionsByQuery,
 } from "../../utils/transaction.utils";
 import type {

@@ -12,7 +12,7 @@ import { getMonthlyChartSeries } from "../helpers/monthlyChartData";
 import { MonthlyBalanceSplineChart } from "../components/dashboard/MonthlyBalanceChart";
 
 const Dashboard: React.FC = () => {
-  const { user, activeBusiness, transactions, loading } = useDashboard();
+  const { activeBusiness, transactions, loading } = useDashboard();
   const omzetToday = getTodayOmzet(transactions);
   const omzetYesterday = getYesterdayOmzet(transactions);
   const lastMonthSaldo = getLastMonthSaldo(transactions);
