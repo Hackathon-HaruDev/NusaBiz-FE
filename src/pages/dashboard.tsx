@@ -22,13 +22,13 @@ const Dashboard:React.FC = () => {
     return(
         <div className="p-5 flex flex-col gap-5">
             <p className="text-2xl font-bold">Dashboard {activeBusiness?.business_name}</p>
-            <main className="flex flex-row h-fit w-full">
-                <div className="flex flex-col px-3 gap-4 w-full">
-                    <div className="flex flex-row gap-4">
+            <main className="flex md:flex-row flex-col h-fit w-full md:gap-0 gap-4">
+                <div className="flex flex-col px-3 gap-4 md:w-3/4">
+                    <div className="flex md:flex-row flex-col gap-4">
                         <Card current={saldo} past={lastMonthSaldo} title="Saldo" loading={loading}/>
                         <Card title="Omzet" current={omzetToday} past={omzetYesterday} loading={loading}/>
                     </div>
-                    <div className="border border-[#e5e5e5] flex flex-col h-full p-1">
+                    <div className="border border-[#e5e5e5] flex flex-col h-full p-2">
                         <div className="flex flex-row justify-between ">
                             <p className="text-2xl">Performa Data Penjualan: </p>
                             <span className="flex flex-row items-center gap-2">
@@ -44,10 +44,12 @@ const Dashboard:React.FC = () => {
                         </div>
                     </div>
                 </div>
-                <TransactionHistory transactions={transactions} loading={loading} />
-              </main>
-      <AiButton onClick={() => setIsModalOpen(true)} />
-      <AiModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+                <div className="px-3 flex-1 w-full">
+                    <TransactionHistory transactions={transactions} loading={loading} />
+                </div>
+            </main>
+        <AiButton onClick={() => setIsModalOpen(true)} />
+        <AiModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 };

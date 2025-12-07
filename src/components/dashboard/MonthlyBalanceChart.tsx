@@ -36,7 +36,6 @@ export const MonthlyBalanceSplineChart = ({ series }: { series: any }) => {
       labels: {
         style: { colors: "#6b7280", fontSize: "13px" },
       },
-      title: { text: "Bulan", style: { fontWeight: 600 } }
     },
 
     yaxis: {
@@ -44,7 +43,6 @@ export const MonthlyBalanceSplineChart = ({ series }: { series: any }) => {
         formatter: (val: { toLocaleString: () => any; }) => `Rp ${val.toLocaleString()}`,
         style: { colors: "#6b7280" }
       },
-      title: { text: "Jumlah (Rp)" }
     },
 
     tooltip: {
@@ -54,7 +52,7 @@ export const MonthlyBalanceSplineChart = ({ series }: { series: any }) => {
     },
 
     legend: {
-      position: "top" as const,
+      position: "bottom" as const,
       horizontalAlign: "center" as const
     }
   };
