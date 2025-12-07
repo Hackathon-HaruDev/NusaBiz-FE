@@ -6,6 +6,8 @@ import DropDown from "../components/dropdown";
 import { useProducts } from "../hooks/useProduct";
 import { useDashboardContext } from "../context/DashboardProvider";
 import { sortProducts } from "../helpers/sortProducts";
+import AiModal from "../components/aiModal";
+import AddProductModal from "../components/produk/addproductmodal";
 
 const Produk:React.FC = () => {
     const { activeBusiness, loading: dashboardLoading } = useDashboardContext();
@@ -13,6 +15,8 @@ const Produk:React.FC = () => {
     const { products, loading: productLoading } = useProducts(businessId);
     const [sortby, setSortBy] = useState("stok-terbanyak");
     const sortedProducts = sortProducts(products, sortby);
+    const [isAIModalOpen, setIsAIModalOpen] = useState(false);
+    const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
 
     const dropdown = [
       {id:"stok-tertinggi", nama: "Stok Tertinggi"},
@@ -29,10 +33,11 @@ const Produk:React.FC = () => {
             <p className="text-2xl font-bold">Produk</p>
               <div className="flex flex-row justify-between">
                 <DropDown title="Urutkan Berdasrakan" data={dropdown} onChange={setSortBy}/>
-                <button className="flex flex-row gap-1 bg-(--primary) text-white items-center justify-center p-2 rounded-lg hover:scale-105 transition-all">
+                {/* <button onClick={()=>{setIsAddProductModalOpen(true)}} className="flex flex-row gap-1 bg-(--primary) text-white items-center justify-center p-2 rounded-lg hover:scale-105 transition-all">
                   <PlusIcon />
                   <p>Tambah Produk</p>
-                </button>
+                </button> */}
+                <button className="btn btn-[#192335]" onClick={()=>{setIsAddProductModalOpen(true)}}><PlusIcon/> Tambah Produk</button>
               </div>
               <div className="grid grid-cols-3 gap-4">
                   {sortedProducts.map((data, index)=>(
@@ -41,7 +46,9 @@ const Produk:React.FC = () => {
                       </div>
                   ))}
               </div>
-          <AiButton />
+          <AddProductModal isOpen={isAddProductModalOpen} onClose={()=>{setIsAddProductModalOpen(false)}}/>
+          <AiButton onClick={()=>{setIsAIModalOpen(true)}} />
+          <AiModal isOpen={isAIModalOpen} onClose={()=>{setIsAIModalOpen(false)}}/>
         </div>
     )
 }

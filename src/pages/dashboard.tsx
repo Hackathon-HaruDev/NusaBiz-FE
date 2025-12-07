@@ -1,5 +1,5 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import Card from "../components/dashboard/Card";
 import AiButton from "../components/aiButton";
 import Chart from "react-apexcharts";
@@ -7,61 +7,74 @@ import { useDashboard } from "../hooks/useDashboard";
 import { TransactionHistory } from "../components/dashboard/TransactionHistory";
 import { getTodayOmzet, getYesterdayOmzet } from "../helpers/Omzet";
 import { getLastMonthSaldo } from "../helpers/lastMonthSaldo";
+import AiModal from "../components/aiModal";
 
 const Dashboard:React.FC = () => {
-const { user, activeBusiness, transactions,loading } = useDashboard();
-const omzetToday = getTodayOmzet(transactions);
-const omzetYesterday = getYesterdayOmzet(transactions);
-const lastMonthSaldo = getLastMonthSaldo(transactions);
+  const { user, activeBusiness, transactions,loading } = useDashboard();
+  const omzetToday = getTodayOmzet(transactions);
+  const omzetYesterday = getYesterdayOmzet(transactions);
+  const lastMonthSaldo = getLastMonthSaldo(transactions);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-const state = {
-  options: {
-    chart: {
-      id: "basic-bar",
+  const state = {
+    options: {
+      chart: {
+        id: "basic-bar",
+      },
+      colors: ["#31A3D3"],
+      plotOptions: {
+        bar: {
+          borderRadius: 6,
+          columnWidth: "45%",
+        },
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      grid: {
+        borderColor: "#e5e5e5",
+      },
+      tooltip: {
+        y: {
+          formatter: (val: { toLocaleString: () => any }) =>
+            `Rp ${val.toLocaleString()}`,
+        },
+      },
+      xaxis: {
+        categories: [
+          "Januari",
+          "Februari",
+          "Maret",
+          "April",
+          "Mei",
+          "Juni",
+          "Juli",
+          "Agustus",
+          "September",
+          "Oktober",
+          "November",
+          "Desember",
+        ],
+        labels: {
+          style: {
+            colors: "#6b7280",
+            fontSize: "13px",
+          },
+        },
+      },
+      yaxis: {
+        labels: {
+          style: { colors: "#6b7280" },
+        },
+      },
     },
-    colors: ["#31A3D3"],
-    plotOptions: {
-      bar: {
-        borderRadius: 6,
-        columnWidth: "45%",
-      }
-    },
-    dataLabels: {
-      enabled: false
-    },
-    grid: {
-      borderColor: "#e5e5e5",
-    },
-    tooltip: {
-      y: {
-        formatter: (val: { toLocaleString: () => any; }) => `Rp ${val.toLocaleString()}`
-      }
-    },
-    xaxis: {
-      categories: [
-        "Januari","Februari","Maret","April","Mei","Juni",
-        "Juli","Agustus","September","Oktober","November","Desember"
-      ],
-      labels: {
-        style: {
-          colors: "#6b7280",
-          fontSize: "13px"
-        }
-      }
-    },
-    yaxis: {
-      labels: {
-        style: { colors: "#6b7280" }
-      }
-    }
-  },
-  series: [
-    {
-      name: "Penjualan",
-      data: [30, 40, 45, 50, 49, 60, 70, 91, 70, 12, 40, 100]
-    }
-  ]
-};
+    series: [
+      {
+        name: "Penjualan",
+        data: [30, 40, 45, 50, 49, 60, 70, 91, 70, 12, 40, 100],
+      },
+    ],
+  };
 
     return(
         <div className="p-5 flex flex-col gap-5">
@@ -94,10 +107,11 @@ const state = {
                     </div>
                 </div>
                 <TransactionHistory transactions={transactions} loading={loading} />
-            </main>
-            <AiButton />
-        </div>
-    )
-}
+              </main>
+      <AiButton onClick={() => setIsModalOpen(true)} />
+      <AiModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+    </div>
+  );
+};
 
 export default Dashboard;
