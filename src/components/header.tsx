@@ -1,5 +1,4 @@
 import { SidebarIcon } from "lucide-react";
-import React from "react";
 import { useDashboard } from "../hooks/useDashboard";
 import { useNavigate } from "react-router-dom";
 

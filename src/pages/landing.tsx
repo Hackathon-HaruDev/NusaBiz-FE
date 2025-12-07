@@ -1,4 +1,3 @@
-import React from "react";
 import Header from "../components/landing/header";
 import { BotIcon, ChartLineIcon, LayoutDashboardIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
