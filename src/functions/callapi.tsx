@@ -1,5 +1,11 @@
-export const APICall = async (endpoint: string, method: string = 'GET', data: any = null, isFormData: boolean = false) => {
-    const token = localStorage.getItem('userToken');
+export const APICall = async (
+    endpoint: string, 
+    method: string = 'GET', 
+    data: any = null, 
+    isFormData: boolean = false,
+    externalToken: string | null = null
+) => {
+    const token = externalToken || localStorage.getItem('userToken');
 
     const isPublicEndpoint = [
         '/auth/login', 

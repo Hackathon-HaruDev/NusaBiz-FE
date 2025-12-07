@@ -14,38 +14,48 @@ export const resetPasswordFunction = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [tokenVerified, setTokenVerified] = useState(false); // Status verifikasi token dari URL
+    const [tokenVerified, setTokenVerified] = useState(false);
+    const [recoveryToken, setRecoveryToken] = useState<string | null>(null);
 
     const location = useLocation();
     const navigate = useNavigate();
 
-    // --- EFFECT: Verifikasi Token dari URL ---
     useEffect(() => {
-        // Supabase menempatkan token di hash: #access_token=...&refresh_token=...
         const hash = location.hash;
         
         if (hash.includes('access_token')) {
-            // Jika token ditemukan, asumsikan Supabase SDK di client sudah memproses token tersebut
-            // dan menetapkan sesi pemulihan.
-            setTokenVerified(true);
-            setMessage("Masukkan kata sandi baru Anda.");
+            const params = new URLSearchParams(hash.substring(1));
+            const token = params.get('access_token');
+            
+            if (token) {
+                setRecoveryToken(token);
+                setTokenVerified(true);
+                setMessage("Token pemulihan valid. Masukkan kata sandi baru Anda.");
+            } else {
+                 setError("Token pemulihan tidak ditemukan.");
+            }
+
         } else {
             setError("Tautan pemulihan tidak valid atau sudah kadaluarsa. Silakan mulai ulang proses pemulihan.");
-            setIsLoading(false);
         }
+        setIsLoading(false);
     }, [location]);
 
     const togglePasswordVisibility = () => setShowPassword(prev => !prev);
     const toggleConfirmPasswordVisibility = () => setShowConfirmPassword(prev => !prev);
 
-    // --- HANDLER: Reset Password ---
     const handlePasswordReset = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
         setMessage(null);
         setIsLoading(true);
 
-        // 1. Validasi
+        if (!tokenVerified || !recoveryToken) {
+             setError('Sesi pemulihan tidak valid atau sudah hilang. Coba lagi dari email.');
+             setIsLoading(false);
+             return;
+        }
+
         if (newPassword.length < 8) {
             setError('Kata sandi baru minimal harus 8 karakter.');
             setIsLoading(false);
@@ -59,19 +69,21 @@ export const resetPasswordFunction = () => {
         }
         
         try {
-            // Catatan: Endpoint ini memerlukan token pemulihan di header Authorization (Bearer token)
-            // yang harus disediakan oleh Supabase SDK setelah redirect dari email.
-            const data = await APICall('/auth/reset-password', 'PUT', { newPassword });
+            await APICall('/auth/reset-password', 'PUT', { newPassword }, false, recoveryToken);
 
             setMessage('Kata sandi berhasil diatur ulang! Mengarahkan ke halaman login...');
             
             setTimeout(() => {
-                navigate(listed.auth); // Ganti dengan rute login Anda yang sebenarnya, misalnya '/auth'
+                navigate(listed.auth);
             }, 3000);
 
         } catch (err: any) {
             console.error('Password Reset Error:', err.message);
-            setError(err.message || 'Gagal mengatur ulang kata sandi.');
+            if (err.message.includes('recovery session') || err.message.includes('expired')) {
+                 setError('Sesi pemulihan kedaluwarsa. Silakan minta tautan pemulihan baru.');
+            } else {
+                 setError(err.message || 'Gagal mengatur ulang kata sandi.');
+            }
         } finally {
             setIsLoading(false);
         }
