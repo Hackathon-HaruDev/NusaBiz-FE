@@ -8,9 +8,10 @@ import { useDashboardContext } from "../context/DashboardProvider";
 import { sortProducts } from "../helpers/sortProducts";
 import AiModal from "../components/aiModal";
 import AddProductModal from "../components/produk/addproductmodal";
+import { useDashboard } from "../hooks/useDashboard";
 
 const Produk:React.FC = () => {
-    const { activeBusiness, loading: dashboardLoading } = useDashboardContext();
+    const { user, activeBusiness, transactions, loading } = useDashboard();
     const businessId = activeBusiness?.id || 0;
     const { products, loading: productLoading } = useProducts(businessId);
     const [sortby, setSortBy] = useState("stok-terbanyak");
@@ -25,7 +26,7 @@ const Produk:React.FC = () => {
       {id:"harga-terendah", nama: "Harga Terendah"}
     ]
 
-    if (dashboardLoading || productLoading) {
+    if (loading || productLoading) {
       return <p className="p-5">Loading produk...</p>;
     }
     return(

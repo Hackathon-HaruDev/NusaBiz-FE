@@ -8,6 +8,9 @@ import { TransactionHistory } from "../components/dashboard/TransactionHistory";
 import { getTodayOmzet, getYesterdayOmzet } from "../helpers/Omzet";
 import { getLastMonthSaldo } from "../helpers/lastMonthSaldo";
 import AiModal from "../components/aiModal";
+import { calculateBalanceFromTransactions } from "../helpers/saldoCounter";
+import { getMonthlyChartSeries } from "../helpers/monthlyChartData";
+import { MonthlyBalanceSplineChart } from "../components/dashboard/MonthlyBalanceChart";
 
 const Dashboard:React.FC = () => {
   const { user, activeBusiness, transactions,loading } = useDashboard();
@@ -15,6 +18,8 @@ const Dashboard:React.FC = () => {
   const omzetYesterday = getYesterdayOmzet(transactions);
   const lastMonthSaldo = getLastMonthSaldo(transactions);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const saldo = calculateBalanceFromTransactions(transactions);
+  const monthlySeries = getMonthlyChartSeries(transactions);
 
   const state = {
     options: {
@@ -82,7 +87,7 @@ const Dashboard:React.FC = () => {
             <main className="flex flex-row h-fit w-full">
                 <div className="flex flex-col px-3 gap-4 w-full">
                     <div className="flex flex-row gap-4">
-                        <Card current={activeBusiness?.current_balance || 0} past={lastMonthSaldo} title="Saldo" loading={loading}/>
+                        <Card current={saldo} past={lastMonthSaldo} title="Saldo" loading={loading}/>
                         <Card title="Omzet" current={omzetToday} past={omzetYesterday} loading={loading}/>
                     </div>
                     <div className="border border-[#e5e5e5] flex flex-col h-full p-1">
@@ -96,12 +101,7 @@ const Dashboard:React.FC = () => {
                         </div>
                         <div className="w-full">
                             <div className="w-full p-5">
-                              <Chart
-                                  options={state.options}
-                                  series={state.series}
-                                  type="bar"
-                                  height={480}
-                              />
+                                <MonthlyBalanceSplineChart series={monthlySeries} />
                             </div>
                         </div>
                     </div>

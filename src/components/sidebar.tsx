@@ -33,7 +33,7 @@ const SideBar: React.FC<props> = ({ isOpen }) => {
             setIsActive("Dashboard"); // default saat "/"
         }
 
-    }, [location.pathname]); // akan update setiap path berubah
+    }, [location.pathname]); 
 
     return (
         <div className={`bg-(--primary) flex flex-col h-[calc(100vh-64px)] font-(--font-karma) text-2xl w-52 p-5 fixed transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
@@ -69,7 +69,14 @@ const SideBar: React.FC<props> = ({ isOpen }) => {
                         <p>Profil</p>
                     </div>
 
-                    <div className="flex flex-row gap-3 items-center p-2 cursor-pointer">
+                    <div 
+                        className="flex flex-row gap-3 items-center p-2 cursor-pointer"
+                        onClick={() => {
+                            localStorage.removeItem('userToken');
+                            localStorage.removeItem('userData');
+                            navigate('/Authentication');
+                        }}
+                    >
                         <LogOutIcon />
                         <p>Keluar</p>
                     </div>
