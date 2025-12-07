@@ -1,21 +1,23 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
-:root{
-    --primary: #192335;
-    --secondary: #3D4C66;
-    color: black;
-    --font-karma: "Karma", serif;
-    background: #F8FAFC;
-    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+:root {
+  --primary: #192335;
+  --secondary: #3d4c66;
+  --bg-dark: #0f172a;
+  --bg-card: #1e293b;
+  color: white;
+  --font-karma: "Karma", serif;
+  background: #0f172a;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
 }
 ::-webkit-scrollbar {
   display: none;
 }
 
 * {
-  scrollbar-width: none; 
+  scrollbar-width: none;
 }
 * {
-  -ms-overflow-style: none; 
+  -ms-overflow-style: none;
 }

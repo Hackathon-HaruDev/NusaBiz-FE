@@ -30,7 +30,7 @@ const Transaksi: React.FC = () => {
         <Card
           title="SALDO"
           amount={totals?.net || 0}
-          color="text-[#000000]"
+          color="text-[#ffffff]"
           loading={loading}
         />
       </div>

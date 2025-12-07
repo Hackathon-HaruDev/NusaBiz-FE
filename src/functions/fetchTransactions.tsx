@@ -1,5 +1,11 @@
 export const fetchTransactions = async (businessId: number) => {
-  const token = localStorage.getItem("userToken");
+  let token: string | null = null;
+  try {
+    token = localStorage.getItem("userToken");
+  } catch (e) {
+    console.error("Storage access error:", e);
+    return [];
+  }
 
   try {
     const res = await fetch(
@@ -7,8 +13,8 @@ export const fetchTransactions = async (businessId: number) => {
       {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       }
     );
 
@@ -20,7 +26,6 @@ export const fetchTransactions = async (businessId: number) => {
 
     // FIX DI SINI ❗❗❗
     return result.data.transactions || [];
-
   } catch (err) {
     console.error("Fetch transaksi error:", err);
     return [];

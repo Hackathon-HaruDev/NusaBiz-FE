@@ -69,7 +69,7 @@ const SideBar: React.FC<props> = ({ isOpen }) => {
                         onClick={() => {
                             localStorage.removeItem('userToken');
                             localStorage.removeItem('userData');
-                            navigate('/Authentication');
+                            navigate('/Auth');
                         }}
                     >
                         <LogOutIcon />

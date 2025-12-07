@@ -180,12 +180,12 @@ const ProdukCard: React.FC<ProdukCardProps> = ({ data, onEdit, onDelete }) => {
   const stockStatus = getStockStatus();
 
   return (
-    <div className="flex flex-col gap-3 p-5 border border-[#e5e5e5] rounded-lg hover:shadow-lg transition-all bg-white">
+    <div className="flex flex-col gap-3 p-5 border border-gray-700 rounded-lg hover:shadow-lg transition-all bg-[#1e293b]">
       <div className="flex flex-row gap-3">
         <img
           src={data.image || "/placeholder-product.png"}
           alt={data.name}
-          className="w-16 h-16 object-cover rounded-lg shrink-0 bg-gray-100"
+          className="w-16 h-16 object-cover rounded-lg shrink-0 bg-gray-700"
           onError={(e) => {
             (e.target as HTMLImageElement).src =
               "https://via.placeholder.com/64x64?text=No+Image";
@@ -193,10 +193,10 @@ const ProdukCard: React.FC<ProdukCardProps> = ({ data, onEdit, onDelete }) => {
         />
 
         <div className="flex flex-col flex-1 min-w-0">
-          <p className="font-medium text-gray-800 truncate">{data.name}</p>
-          <p className="text-sm text-gray-500">Maks: {baseStock} Stock</p>
+          <p className="font-medium text-white truncate">{data.name}</p>
+          <p className="text-sm text-gray-400">Maks: {baseStock} Stock</p>
 
-          <div className="bg-gray-200 w-full h-2 rounded mt-1">
+          <div className="bg-gray-600 w-full h-2 rounded mt-1">
             <div
               className={`h-full ${getStockBarColor()} rounded transition-all duration-200`}
               style={{ width: `${percentage}%` }}
@@ -206,11 +206,11 @@ const ProdukCard: React.FC<ProdukCardProps> = ({ data, onEdit, onDelete }) => {
       </div>
 
       {/* Stock Adjustment Controls */}
-      <div className="flex items-center justify-center gap-3 py-2 bg-gray-50 rounded-lg">
+      <div className="flex items-center justify-center gap-3 py-2 bg-[#0f172a] rounded-lg">
         <button
           onClick={handleDecrement}
           disabled={currentStock === 0}
-          className="p-2.5 bg-red-100 hover:bg-red-200 active:bg-red-300 disabled:bg-gray-100 disabled:cursor-not-allowed rounded-lg transition-colors select-none"
+          className="p-2.5 bg-red-900/30 hover:bg-red-900/50 active:bg-red-900/70 disabled:bg-gray-700 disabled:cursor-not-allowed rounded-lg transition-colors select-none"
           title="Kurangi Stok"
         >
           <Minus
@@ -230,15 +230,15 @@ const ProdukCard: React.FC<ProdukCardProps> = ({ data, onEdit, onDelete }) => {
             onBlur={handleInputBlur}
             onKeyDown={handleKeyDown}
             onClick={(e) => e.stopPropagation()}
-            className="w-16 text-center text-2xl font-bold text-gray-800 bg-transparent border-b-2 border-transparent hover:border-gray-300 focus:border-blue-500 focus:outline-none transition-colors tabular-nums"
+            className="w-16 text-center text-2xl font-bold text-white bg-transparent border-b-2 border-transparent hover:border-gray-500 focus:border-blue-500 focus:outline-none transition-colors tabular-nums"
           />
-          <span className="text-xs text-gray-500">stok saat ini</span>
+          <span className="text-xs text-gray-400">stok saat ini</span>
         </div>
 
         <button
           onClick={handleIncrement}
           disabled={currentStock >= baseStock}
-          className="p-2.5 bg-green-100 hover:bg-green-200 active:bg-green-300 disabled:bg-gray-100 disabled:cursor-not-allowed rounded-lg transition-colors select-none"
+          className="p-2.5 bg-green-900/30 hover:bg-green-900/50 active:bg-green-900/70 disabled:bg-gray-700 disabled:cursor-not-allowed rounded-lg transition-colors select-none"
           title="Tambah Stok"
         >
           <Plus
@@ -252,28 +252,28 @@ const ProdukCard: React.FC<ProdukCardProps> = ({ data, onEdit, onDelete }) => {
 
       <div className="flex flex-row justify-between text-sm">
         <div>
-          <p className="text-gray-500">Harga Beli:</p>
-          <p className="font-medium text-gray-700">
+          <p className="text-gray-400">Harga Beli:</p>
+          <p className="font-medium text-gray-200">
             Rp. {formatNumber(data.purchase_price || 0)}
           </p>
         </div>
         <div className="text-right">
-          <p className="text-gray-500">Harga Jual:</p>
-          <p className="font-medium text-gray-700">
+          <p className="text-gray-400">Harga Jual:</p>
+          <p className="font-medium text-gray-200">
             Rp. {formatNumber(data.selling_price || 0)}
           </p>
         </div>
       </div>
 
-      <div className="flex flex-row gap-3 items-center justify-between pt-2 border-t border-gray-100">
+      <div className="flex flex-row gap-3 items-center justify-between pt-2 border-t border-gray-700">
         <div className="flex-1">
           <span
             className={`text-xs px-2 py-1 rounded-full transition-colors ${
               stockStatus === "active"
-                ? "bg-green-100 text-green-700"
+                ? "bg-green-900/30 text-green-400"
                 : stockStatus === "low"
-                ? "bg-yellow-100 text-yellow-700"
-                : "bg-red-100 text-red-700"
+                ? "bg-yellow-900/30 text-yellow-400"
+                : "bg-red-900/30 text-red-400"
             }`}
           >
             {stockStatus === "active"
@@ -286,22 +286,22 @@ const ProdukCard: React.FC<ProdukCardProps> = ({ data, onEdit, onDelete }) => {
         <div className="flex flex-row gap-2">
           <button
             onClick={handleEditClick}
-            className="p-2 hover:bg-blue-50 rounded-lg transition-colors group"
+            className="p-2 hover:bg-blue-900/30 rounded-lg transition-colors group"
             title="Edit Produk"
           >
             <SquarePenIcon
               size={18}
-              className="text-gray-500 group-hover:text-blue-600"
+              className="text-gray-400 group-hover:text-blue-400"
             />
           </button>
           <button
             onClick={handleDeleteClick}
-            className="p-2 hover:bg-red-50 rounded-lg transition-colors group"
+            className="p-2 hover:bg-red-900/30 rounded-lg transition-colors group"
             title="Hapus Produk"
           >
             <Trash2Icon
               size={18}
-              className="text-gray-500 group-hover:text-red-600"
+              className="text-gray-400 group-hover:text-red-400"
             />
           </button>
         </div>
