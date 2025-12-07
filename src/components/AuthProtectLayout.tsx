@@ -40,7 +40,7 @@ const AuthProtectLayout = ({ children }: { children: React.ReactNode }) => {
 
   // ❌ Invalid or expired token
   if (isValid === false) {
-    return <Navigate to="/Authentication" replace />;
+    return <Navigate to="/Auth" replace />;
   }
 
   // ✔ Token valid

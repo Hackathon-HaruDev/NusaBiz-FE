@@ -18,7 +18,8 @@ const Dashboard:React.FC = () => {
   const lastMonthSaldo = getLastMonthSaldo(transactions);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const saldo = calculateBalanceFromTransactions(transactions);
-  const monthlySeries = getMonthlyChartSeries(transactions);
+  const [year, setYear] = useState(new Date().getFullYear());
+  const monthlySeries = getMonthlyChartSeries(transactions, year);
     return(
         <div className="p-5 flex flex-col gap-5">
             <p className="text-2xl font-bold">Dashboard {activeBusiness?.business_name}</p>
@@ -32,9 +33,9 @@ const Dashboard:React.FC = () => {
                         <div className="flex flex-row justify-between ">
                             <p className="text-2xl">Performa Data Penjualan: </p>
                             <span className="flex flex-row items-center gap-2">
-                                <ChevronLeftIcon />
-                                <p>2025</p>
-                                <ChevronRightIcon />
+                                <ChevronLeftIcon onClick={()=>setYear(year-1)} />
+                                <p>{year}</p>
+                                <ChevronRightIcon onClick={()=>setYear(year+1)} />
                             </span>
                         </div>
                         <div className="w-full">
