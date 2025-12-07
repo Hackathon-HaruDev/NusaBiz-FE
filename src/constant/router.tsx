@@ -5,6 +5,8 @@ import Dashboard from '../pages/dashboard';
 import Auth from '../pages/auth';
 import PasswordObscure from '../components/auth/obscure';
 import AuthToggle from '../components/auth/toggle';
+import profile from '../pages/profile';
+import Profile from '../pages/profile';
 
 export const Router = createBrowserRouter([
     {
@@ -29,7 +31,7 @@ export const Router = createBrowserRouter([
         },
         {
             path: listed.profile,
-            element: <div>Profile</div>
+            element: <Profile />
         }
     ],
     },

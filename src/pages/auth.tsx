@@ -16,14 +16,14 @@ const Auth: React.FC = () => {
     
     return(
         <div className="flex justify-center items-center h-screen bg-black/30">
-            <div className="bg-white/75 p-1 rounded-3xl shadow-2xl w-[400px] max-w-sm scale-130">
+            <div className="bg-white/75 p-1 rounded-3xl shadow-2xl md:w-30 lg:w-96 w-80 lg:scale-130">
 
                 <AuthToggle activeTab={currentTab} onTabChange={handleTabChange} />
                 
                 <div className="flex flex-col items-center mb-6 px-8">
-                    <div className="w-12 h-12 flex items-center justify-center rounded-full bg-white border border-gray-200 shadow-lg mb-2">
+                    {/* <div className="w-12 h-12 flex items-center justify-center rounded-full bg-white border border-gray-200 shadow-lg mb-2">
                         <img src="https://placehold.co/400" alt="logo" className='rounded-full' />
-                    </div>
+                    </div> */}
                     <p className="text-gray-800 font-semibold text-base mb-1">NusaBiz</p>
                     <p className="text-gray-500 text-xs text-center">Aplikasi Manajemen Bisnis Berbasis AI</p>
                 </div>
