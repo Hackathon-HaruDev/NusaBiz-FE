@@ -1,22 +1,21 @@
-@import url('https://fonts.googleapis.com/css2?family=Karma:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 @plugin "daisyui";
 
 :root{
     --primary: #192335;
-    --secondary: #F43F5E;
+    --secondary: #3D4C66;
     color: black;
     --font-karma: "Karma", serif;
-    background: #fff;
+    background: #F8FAFC;
     font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
- /* font-family: var(--font-karma), serif; */
-/* Apply the custom font globally */
-/* ::-webkit-scrollbar {
-   
-    display: none;
-} */
+::-webkit-scrollbar {
+  display: none;
+}
 
-body::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Edge */
+* {
+  scrollbar-width: none; 
+}
+* {
+  -ms-overflow-style: none; 
 }

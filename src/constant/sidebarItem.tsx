@@ -1,4 +1,4 @@
-import { LayoutDashboardIcon, PackageOpenIcon, WalletIcon } from "lucide-react";
+import { LayoutDashboardIcon, PackageOpenIcon, UserRoundIcon, WalletIcon } from "lucide-react";
 import { listed } from "./listed";
 
 export const sidebarItem = [
@@ -16,5 +16,6 @@ export const sidebarItem = [
         nama: "Produk",
         href: listed.produk,
         icon: <PackageOpenIcon />
-    }
+    },
+
 ]

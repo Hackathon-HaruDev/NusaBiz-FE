@@ -2,10 +2,11 @@ import { createBrowserRouter } from 'react-router-dom';
 import Layout from '../components/layout';
 import { listed } from './listed';
 import Dashboard from '../pages/dashboard';
+import LandingPage from '../pages/landing';
+import Produk from '../pages/produk';
+import Transaksi from '../pages/transaksi';
 import Auth from '../pages/auth';
-import PasswordObscure from '../components/auth/obscure';
-import AuthToggle from '../components/auth/toggle';
-import profile from '../pages/profile';
+import AuthProtectLayout from '../components/AuthProtectLayout';
 import Profile from '../pages/profile';
 import ResetPassword from '../pages/resetpassword';
 
@@ -13,22 +14,26 @@ export const Router = createBrowserRouter([
     {
     path: '/',
     element: (
-        <>
+        <AuthProtectLayout>
             <Layout />
-        </>
+        </AuthProtectLayout>
     ),
     children: [
+        {
+            index: true,
+            element: <Dashboard />,
+        },
         {
             path: listed.dashboard,
             element: <Dashboard />
         },
         {
             path: listed.transaksi,
-            element: <div>Test</div>
+            element: <Transaksi />
         },
         {
             path: listed.produk,
-            element: <div>Test</div>
+            element: <Produk />
         },
         {
             path: listed.profile,
@@ -38,7 +43,7 @@ export const Router = createBrowserRouter([
     },
     {
         path: listed.landingPage,
-        element: <div>landing Page</div>
+        element: <LandingPage />
     },
     {
         path: listed.auth,

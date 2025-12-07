@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import React from 'react'; 
-import { useNavigate } from 'react-router-dom';
-import { listed } from '../constant/listed';
-import APICall from './callapi';
+import { useState } from "react";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { listed } from "../constant/listed";
+import APICall from "./callapi";
 
 type AuthOption = "masuk" | "daftar";
 
@@ -37,15 +37,12 @@ export const authFunction = () => {
             return;
         }
 
-        try {
-            const data = await APICall('/auth/register', 'POST', { 
-                email, 
-                password,
-            });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [showBusinessSetup, setShowBusinessSetup] = useState(false);
 
-            alert('Pendaftaran berhasil! Silakan Login.');
-            setCurrentTab('masuk');
-            setError(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
         } catch (err: any) {
             console.error('Register Error:', err.message);
@@ -95,7 +92,9 @@ export const authFunction = () => {
         if (currentTab === 'daftar') {
             await registerUser();
         } else {
-            await loginUser();
+          // User has no businesses yet - prompt setup
+          console.log("⚠️ No businesses found for user. Prompting setup.");
+          setShowBusinessSetup(true);
         }
         
         setIsLoading(false);
