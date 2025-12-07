@@ -5,16 +5,15 @@ import Dashboard from '../pages/dashboard';
 import LandingPage from '../pages/landing';
 import Produk from '../pages/produk';
 import Auth from '../pages/auth';
-import PasswordObscure from '../components/auth/obscure';
-import AuthToggle from '../components/auth/toggle';
+import AuthProtectLayout from '../components/AuthProtectLayout';
 
 export const Router = createBrowserRouter([
     {
     path: '/',
     element: (
-        <>
+        <AuthProtectLayout>
             <Layout />
-        </>
+        </AuthProtectLayout>
     ),
     children: [
         {
