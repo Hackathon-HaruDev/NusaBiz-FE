@@ -347,7 +347,21 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
               <input
                 type="number"
                 value={stok}
-                onChange={(e) => setStok(e.target.value)}
+                onChange={(e) => {
+                  const inputValue = e.target.value;
+                  // Allow empty input for clearing
+                  if (inputValue === "") {
+                    setStok("");
+                    return;
+                  }
+                  const value = parseInt(inputValue);
+                  // Prevent negative values - minimum is 0
+                  if (value < 0) {
+                    setStok("0");
+                  } else {
+                    setStok(value.toString());
+                  }
+                }}
                 className="w-full bg-[#2C3E50] text-white rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 placeholder="0"
                 min="0"

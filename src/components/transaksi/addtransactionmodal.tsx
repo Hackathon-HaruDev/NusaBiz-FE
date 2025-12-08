@@ -342,8 +342,10 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                   <select
                     value={selectedProductId}
                     onChange={(e) => {
-                      setSelectedProductId(e.target.value);
+                      const productId = e.target.value;
+                      setSelectedProductId(productId);
                       setQuantity("");
+                      setTotal("");
                     }}
                     className="w-full bg-[#2C3E50] text-white rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                     disabled={loadingProducts}
@@ -365,13 +367,39 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                   <input
                     type="number"
                     value={quantity}
+                    min="1"
+                    max={maxQuantity}
                     onChange={(e) => {
-                      const value = parseInt(e.target.value);
-                      if (value <= maxQuantity) {
-                        setQuantity(e.target.value);
+                      const inputValue = e.target.value;
+
+                      // Allow empty input for clearing
+                      if (inputValue === "") {
+                        setQuantity("");
+                        setTotal("");
+                        return;
+                      }
+
+                      let value = parseInt(inputValue);
+
+                      // Prevent negative or zero values - minimum is 1
+                      if (value < 1) {
+                        value = 1;
+                      }
+
+                      // Check max quantity (stock)
+                      if (value > maxQuantity) {
+                        value = maxQuantity;
+                      }
+
+                      setQuantity(value.toString());
+
+                      // Auto-fill total based on selling_price × quantity
+                      if (selectedProduct?.selling_price) {
+                        const calculatedTotal =
+                          selectedProduct.selling_price * value;
+                        setTotal(formatRupiah(calculatedTotal.toString()));
                       }
                     }}
-                    max={maxQuantity}
                     className="w-full bg-[#2C3E50] text-white rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     placeholder={
                       selectedProductId
